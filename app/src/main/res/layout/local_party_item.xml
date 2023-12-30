@@ -66,7 +66,7 @@
                 android:layout_width="155dp"
                 android:layout_height="20dp"
                 android:fontFamily="@font/inter"
-                android:text="\@Jogoat"
+                android:text="\@Jogoat "
                 android:textColor="@color/HostsText"
                 android:textFontWeight="950"
                 android:textSize="12dp"
