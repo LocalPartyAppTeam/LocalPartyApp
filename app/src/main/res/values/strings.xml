@@ -1,0 +1,9 @@
+<resources>
+    <string name="app_name">PartyApp</string>
+    <string name="invitationsBNT">Invitations</string>
+    <string name="eventsBNT">Events</string>
+    <string name="localsBNT">Locals</string>
+    <string name="profileBNT">Profile</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+</resources>
