@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "1077769282088",
+    "project_id": "partyapp-51834",
+    "storage_bucket": "partyapp-51834.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1077769282088:android:8614fc667e14db43c90b1d",
+        "android_client_info": {
+          "package_name": "com.example.partyapp"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCA1ck4g0dHUyA0UhImXx9iAY9zPKEaXmk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
