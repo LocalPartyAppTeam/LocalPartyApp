@@ -9,5 +9,7 @@
     <color name="EventInfoText">#000000</color>
     <color name="HostsText">#BDBDBD</color>
     <color name="InviteOthersButton">#767676</color>
+    <color name="EditEventButton">#1B3D70</color>
+    <color name="RejectButton">#FF0F0F</color>
     <color name="ImInButton">#40BD2B</color>
 </resources>
