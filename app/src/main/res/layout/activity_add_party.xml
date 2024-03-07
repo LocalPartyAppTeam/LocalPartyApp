@@ -48,11 +48,11 @@
                 app:layout_constraintTop_toTopOf="parent" />
 
             <TextView
-                android:id="@+id/PartyDescStatic"
-                android:layout_width="225dp"
+                android:id="@+id/partyStartStatic"
+                android:layout_width="75dp"
                 android:layout_height="30dp"
                 android:fontFamily="@font/inter"
-                android:text="Party Description:"
+                android:text="Start:"
                 android:textColor="@color/white"
                 android:textFontWeight="1000"
                 android:textSize="25dp"
@@ -60,6 +60,64 @@
                 app:layout_constraintTop_toBottomOf="@id/PartyNameStatic"
                 android:layout_marginTop="15dp"
                 android:layout_marginStart="15dp" />
+
+            <TextView
+                android:id="@+id/PartyStartText"
+                android:layout_width="250dp"
+                android:layout_height="30dp"
+                android:layout_marginStart="24dp"
+                android:layout_marginTop="19dp"
+                android:background="@drawable/rounded_text_entry"
+                android:paddingHorizontal="10dp"
+                android:singleLine="true"
+                android:text="THIS IS A TEST"
+                android:textColor="@color/white"
+                android:textSize="20dp"
+                app:layout_constraintStart_toEndOf="@id/partyStartStatic"
+                app:layout_constraintTop_toBottomOf="@id/PartyNameStatic" />
+
+            <TextView
+                android:id="@+id/partyEndStatic"
+                android:layout_width="75dp"
+                android:layout_height="30dp"
+                android:fontFamily="@font/inter"
+                android:text="End:"
+                android:textColor="@color/white"
+                android:textFontWeight="1000"
+                android:textSize="25dp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/partyStartStatic"
+                android:layout_marginTop="15dp"
+                android:layout_marginStart="15dp" />
+
+            <TextView
+                android:id="@+id/PartyEndText"
+                android:layout_width="250dp"
+                android:layout_height="30dp"
+                android:layout_marginStart="24dp"
+                android:layout_marginTop="19dp"
+                android:background="@drawable/rounded_text_entry"
+                android:paddingHorizontal="10dp"
+                android:singleLine="true"
+                android:text="THIS IS A TEST"
+                android:textColor="@color/white"
+                android:textSize="20dp"
+                app:layout_constraintStart_toEndOf="@id/partyEndStatic"
+                app:layout_constraintTop_toBottomOf="@id/partyStartStatic" />
+
+            <TextView
+            android:id="@+id/PartyDescStatic"
+            android:layout_width="225dp"
+            android:layout_height="30dp"
+            android:fontFamily="@font/inter"
+            android:text="Party Description:"
+            android:textColor="@color/white"
+            android:textFontWeight="1000"
+            android:textSize="25dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/partyEndStatic"
+            android:layout_marginTop="15dp"
+            android:layout_marginStart="15dp" />
 
             <EditText
                 android:id="@+id/PartyDescEntry"
@@ -141,6 +199,7 @@
                 tools:listitem="@layout/party_image_item"/>
 
             <Button
+                android:id="@+id/PartySubmitButton"
                 style="@style/EventCardActionButton"
                 android:layout_width="300dp"
                 android:layout_height="50dp"
