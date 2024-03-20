@@ -25,7 +25,7 @@ class MainActivity : AppCompatActivity() {
             when (item.itemId) {
                 R.id.invitationsBN -> fragment = InvitationsFragment()
                 R.id.eventsBN -> fragment = MyEventsFragment()
-                R.id.localsBN -> fragment = LocalsFragment()
+                R.id.localsBN -> fragment = LocalsFragment2() //originally LocalsFragment (i did not touch LocalsFragment file)
                 R.id.profileBN -> fragment = ProfileFragment()
             }
             replaceFragment(fragment)
