@@ -1,9 +1,8 @@
-<androidx.cardview.widget.CardView
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_margin="8dp">
-    android:cardCornerRadius="20dp">
 
 
     <LinearLayout
@@ -12,7 +11,6 @@
         android:orientation="vertical"
         android:padding="16dp">
 
-        <!-- First Line: Event Name and Host -->
         <TextView
             android:id="@+id/text_event_name_host"
             android:layout_width="wrap_content"
@@ -21,7 +19,6 @@
             android:textSize="18sp"
             android:textStyle="bold"/>
 
-        <!-- Second Line: Start Time to End Time -->
         <TextView
             android:id="@+id/text_event_time"
             android:layout_width="wrap_content"
@@ -29,15 +26,13 @@
             android:text="Start Time to End Time"
             android:textSize="16sp"/>
 
-        <!-- Third Line: Address and Distance -->
         <TextView
             android:id="@+id/text_event_address_distance"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Address | Distance miles"
+            android:text="Address"
             android:textSize="16sp"/>
 
-        <!-- Fourth Line: List of Images -->
         <HorizontalScrollView
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
@@ -53,25 +48,22 @@
             </LinearLayout>
         </HorizontalScrollView>
 
-        <!-- Top Right Quarter: Day of Week and Day of Month -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal">
 
-            <!-- Spacer View to Push Views to Right -->
             <View
                 android:layout_width="0dp"
                 android:layout_height="0dp"
                 android:layout_weight="1"/>
 
-            <!-- TextView for Day of Week and Day of Month -->
             <TextView
                 android:id="@+id/text_day_of_week"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Mon"
-                android:textSize="28sp"
+                android:textSize="22sp"
                 android:layout_marginEnd="8dp"/>
 
             <TextView
@@ -79,7 +71,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="1"
-                android:textSize="28sp"/>
+                android:textSize="22sp"/>
         </LinearLayout>
 
     </LinearLayout>

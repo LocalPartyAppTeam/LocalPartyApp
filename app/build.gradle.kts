@@ -83,6 +83,7 @@ android {
         debugImplementation("androidx.compose.ui:ui-test-manifest")
         implementation("com.google.firebase:firebase-analytics")
         implementation("com.google.android.gms:play-services-location:17.0.0")
+        implementation("org.threeten:threetenbp:1.4.0")
         implementation("com.google.code.gson:gson:2.10.1")
         testImplementation("junit:junit:4.12")
         androidTestImplementation("androidx.test.ext:junit:1.1.1")

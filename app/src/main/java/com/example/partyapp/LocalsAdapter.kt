@@ -27,9 +27,9 @@ class LocalsAdapter(private val localsList: List<LocalItem>) :
 
     override fun onBindViewHolder(holder: LocalViewHolder, position: Int) {
         val currentItem = localsList[position]
-        holder.eventNameHost.text = currentItem.eventName + " hosted by " + currentItem.host
+        holder.eventNameHost.text = currentItem.eventName + " (" + currentItem.distance + ")" // + " hosted by " + currentItem.host
         holder.eventTime.text = currentItem.time
-        holder.eventAddressDistance.text = currentItem.address + " | " + currentItem.distance
+        holder.eventAddressDistance.text = currentItem.address//  + " (" + currentItem.distance + ")"
         holder.dayOfWeek.text = currentItem.dayOfWeek
         holder.dayOfMonth.text = currentItem.dayOfMonth
     }
