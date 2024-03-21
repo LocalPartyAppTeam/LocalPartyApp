@@ -8,6 +8,8 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ArrayAdapter
+import android.widget.EditText
 import android.widget.Toast
 import androidx.core.app.ActivityCompat
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -38,6 +40,7 @@ class LocalsFragment2 : Fragment() {
     private lateinit var eventsReference: DatabaseReference
     private lateinit var geocoder: Geocoder
     private lateinit var fusedLocationClient: FusedLocationProviderClient
+    private lateinit var searchbar : EditText
 
 
     private var currentLatitude: Double = 0.0
@@ -54,15 +57,14 @@ class LocalsFragment2 : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+
         requestLocation()
         val view = inflater.inflate(R.layout.fragment_locals, container, false)
         recyclerView = view.findViewById(R.id.recycler_locals)
         recyclerView.layoutManager = LinearLayoutManager(requireContext())
         ///random events will add from firebase later
-
         eventsReference = FirebaseDatabase.getInstance().getReference("Events")
         //Toast.makeText(requireContext(),"EventsReference path: ${eventsReference}",Toast.LENGTH_LONG).show()
-
         eventsReference.addListenerForSingleValueEvent(object : ValueEventListener {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
                 val localsList = mutableListOf<LocalItem>()
@@ -71,7 +73,7 @@ class LocalsFragment2 : Fragment() {
                     userId?.let {
                         for (eventSnapshot in userSnapshot.children) {
                             val eventName = eventSnapshot.child("name").getValue(String::class.java)
-                            val eventDesc = eventSnapshot.child("desc").getValue(String::class.java)
+                            val eventDesc = eventSnapshot.child("desc").getValue(String::class.java) //i need this
                             val eventHost = eventSnapshot.child("host").getValue(String::class.java)
                             val eventLat = eventSnapshot.child("lat").getValue(Double::class.java)
                             val eventLong = eventSnapshot.child("long").getValue(Double::class.java)
@@ -87,7 +89,6 @@ class LocalsFragment2 : Fragment() {
                             var distance = 0.0
 
                             if(eventLat != null && eventLong != null) distance = calculateDistance(currentLatitude, currentLongitude, eventLat, eventLong)
-
 //                            Toast.makeText(requireContext(),dayOfWeek.toString(),Toast.LENGTH_SHORT).show()
                             /* structure of card item
                             val eventName: String,
@@ -101,10 +102,20 @@ class LocalsFragment2 : Fragment() {
                             /*
                             firebase structure
                             desc,end,host,imgPaths,lat,long,name,start
-
                             format: 2024-04-21T10:30
                              */
-                            val localItem = LocalItem(eventName.toString(), eventHost.toString(), address.toString(), startTime.toString() + "-" +  endTime.toString(), round(distance*0.621371,2).toString() + " mi", dayOfWeek, dayOfMonth)
+                            /*
+                            i need the imgPaths now
+                             */
+                            val imgPathsSnapshot = eventSnapshot.child("imgPaths")
+                            val imagePaths = mutableListOf<String>()
+                            for (imageSnapshot in imgPathsSnapshot.children) {
+                                val imagePath = imageSnapshot.getValue(String::class.java)
+                                imagePath?.let {
+                                    imagePaths.add(it)
+                                }
+                            }
+                            val localItem = LocalItem(eventName.toString(), eventHost.toString(), address.toString(), startTime.toString() + "-" +  endTime.toString(), round(distance*0.621371,2).toString() + " mi", dayOfWeek, dayOfMonth,eventStart, eventDesc,imagePaths)
                             localsList.add(localItem)
                         }
                     }
@@ -177,36 +188,24 @@ class LocalsFragment2 : Fragment() {
                 Manifest.permission.ACCESS_COARSE_LOCATION
             ) != PackageManager.PERMISSION_GRANTED
         ) {
-            // TODO: Consider calling
-            //    ActivityCompat#requestPermissions
-            // here to request the missing permissions, and then overriding
-            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-            //                                          int[] grantResults)
-            // to handle the case where the user grants the permission. See the documentation
-            // for ActivityCompat#requestPermissions for more details.
             return
         }
         fusedLocationClient.lastLocation
             .addOnSuccessListener { location ->
-                // Got last known location. In some rare situations, this can be null.
                 if (location != null) {
                      currentLatitude = location.latitude
                     currentLongitude = location.longitude
-                    Toast.makeText(requireContext(),currentLatitude.toString(), Toast.LENGTH_LONG).show()
-                    Toast.makeText(requireContext(),currentLongitude.toString(), Toast.LENGTH_LONG).show()
-
-                    // Use latitude and longitude
-                    // You can pass these values to other parts of your app or perform further processing
+                    //Toast.makeText(requireContext(),currentLatitude.toString(), Toast.LENGTH_LONG).show()
+                    //Toast.makeText(requireContext(),currentLongitude.toString(), Toast.LENGTH_LONG).show()
                 }
             }
             .addOnFailureListener { e ->
-                // Handle failure to get location
                 e.printStackTrace()
             }
     }
 
     fun round(number: Double, decimals: Int): Double {
-        if (decimals < 0) throw IllegalArgumentException("Decimals must be greater than or equal to 0")
+        if (decimals < 0) throw IllegalArgumentException("no work")
         val factor = 10.0.pow(decimals)
         return Math.round(number * factor) / factor
     }

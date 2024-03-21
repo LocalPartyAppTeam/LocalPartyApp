@@ -7,4 +7,8 @@
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="title_activity_add_party">AddPartyActivity</string>
+    <string-array name="sort_options">
+        <item>Sort by Distance</item>
+        <item>Sort by Attendees</item>
+    </string-array>
 </resources>
