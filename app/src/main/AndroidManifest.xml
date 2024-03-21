@@ -40,6 +40,9 @@
         <activity android:name=".LoginActivity"
             android:exported="false"
             android:label="Login" />
+        <activity android:name=".SignUpActivity"
+            android:exported="false"
+            android:label="SignUp" />
     </application>
 
 </manifest>
