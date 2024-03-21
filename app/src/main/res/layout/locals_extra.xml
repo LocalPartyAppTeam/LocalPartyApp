@@ -6,7 +6,6 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <!-- Event Name -->
     <TextView
         android:id="@+id/eventNameTextView"
         android:layout_width="wrap_content"
@@ -16,7 +15,6 @@
         app:layout_constraintTop_toTopOf="parent"
         android:layout_margin="16dp"/>
 
-    <!-- Host -->
     <TextView
         android:id="@+id/hostNameTextView"
         android:layout_width="wrap_content"
@@ -27,7 +25,6 @@
         android:layout_marginStart="16dp"
         android:layout_marginTop="8dp"/>
 
-    <!-- Address -->
     <TextView
         android:id="@+id/addressTextView"
         android:layout_width="wrap_content"
@@ -38,7 +35,6 @@
         android:layout_marginStart="16dp"
         android:layout_marginTop="8dp"/>
 
-    <!-- Time -->
     <TextView
         android:id="@+id/timeTextView"
         android:layout_width="wrap_content"
@@ -49,7 +45,6 @@
         android:layout_marginStart="16dp"
         android:layout_marginTop="8dp"/>
 
-    <!-- Distance -->
     <TextView
         android:id="@+id/distanceTextView"
         android:layout_width="wrap_content"
@@ -60,7 +55,6 @@
         android:layout_marginStart="16dp"
         android:layout_marginTop="8dp"/>
 
-    <!-- Day of Week -->
     <TextView
         android:id="@+id/dayOfWeekTextView"
         android:layout_width="wrap_content"
@@ -71,7 +65,6 @@
         android:layout_marginStart="16dp"
         android:layout_marginTop="8dp"/>
 
-    <!-- Day of Month -->
     <TextView
         android:id="@+id/dayOfMonthTextView"
         android:layout_width="wrap_content"

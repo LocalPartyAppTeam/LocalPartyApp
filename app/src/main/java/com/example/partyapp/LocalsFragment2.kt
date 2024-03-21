@@ -120,8 +120,10 @@ class LocalsFragment2 : Fragment() {
                         }
                     }
                 }
-
 //                localsList.add(LocalItem("Event 1", "Host 1", "Address 1", "Time 1", "Date 1", "Mon","20"))
+//                localsList.sortBy { it.distance?.toDouble() }
+
+                localsList.sortBy { it.distance?.replace(" mi", "")?.toDouble() }
                 adapter = LocalsAdapter(localsList)
                 recyclerView.adapter = adapter
             }
