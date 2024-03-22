@@ -27,4 +27,6 @@
     <string name="last_name">Last Name</string>
     <string name="name">Name</string>
     <string name="confirm_password">Confirm Password</string>
+    <string name="logout">Logout</string>
+    <string name="logo_description">Firework Clipart</string>
 </resources>

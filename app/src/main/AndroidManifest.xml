@@ -12,7 +12,7 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/Theme.PartyApp"
+        android:theme="@style/Base.Theme.PartyApp"
         tools:targetApi="31">
         <meta-data
             android:name="com.google.android.geo.API_KEY"
@@ -27,7 +27,7 @@
             android:name=".AddPartyActivity"
             android:exported="false"
             android:label="@string/title_activity_add_party"
-            android:theme="@style/Theme.PartyApp" />
+            android:theme="@style/Base.Theme.PartyApp" />
         <activity
             android:name=".MainActivity"
             android:exported="true">
