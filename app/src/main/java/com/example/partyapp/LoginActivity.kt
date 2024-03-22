@@ -90,7 +90,7 @@ class LoginActivity : AppCompatActivity() {
     }
 
     private fun updateUI() {
-        startActivity(Intent(this@LoginActivity, MainActivity::class.java))
+        startActivity(Intent(this, MainActivity::class.java))
         Toast.makeText(
             this,
             "Authentication Success.",
@@ -98,4 +98,6 @@ class LoginActivity : AppCompatActivity() {
         ).show()
         finish()
     }
+
+
 }
