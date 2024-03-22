@@ -1,21 +1,42 @@
 package com.example.partyapp
 
 import android.annotation.SuppressLint
+import android.app.DatePickerDialog
+import android.app.TimePickerDialog
+import android.content.ContentValues
+import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.location.Location
 import android.location.LocationManager
+import android.os.Build
 import android.os.Bundle
 import android.os.Looper
 import android.provider.Settings
 import android.util.Log
+import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.view.View
+import android.view.ViewGroup
+import android.widget.Button
+import android.widget.DatePicker
 import android.widget.EditText
+import android.widget.ImageView
 import android.widget.ScrollView
+import android.widget.TextView
 import android.widget.Toast
+import androidx.activity.result.PickVisualMediaRequest
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
+import androidx.core.graphics.drawable.toIcon
+import androidx.core.net.toUri
+import androidx.core.util.rangeTo
+import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
+import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.example.partyapp.place.Place
 import com.example.partyapp.place.PlacesReader
 import com.google.android.gms.location.FusedLocationProviderClient
@@ -30,26 +51,169 @@ import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
 import com.google.android.gms.tasks.OnCompleteListener
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.database.ktx.database
+import com.google.firebase.ktx.Firebase
+import com.google.firebase.storage.FirebaseStorage
+import java.time.LocalDateTime
 
-
+private lateinit var auth: FirebaseAuth
+const val IMAGE_REQUEST_CODE = 100
+@RequiresApi(Build.VERSION_CODES.P)
 class AddPartyActivity : AppCompatActivity(), OnMapReadyCallback {
     private var lat = 40.7357
     private var long = -74.172363
     private val MAPVIEW_BUNDLE_KEY = "MapViewBundleKey"
     private var locationManager : LocationManager? = null
     private val PERMISSION_ID = 44
-
+    private val monthMap = mapOf(0 to "Jan",
+        1 to "Feb",
+        2 to "Mar",
+        3 to "Apr",
+        4 to "May",
+        5 to "Jun",
+        6 to "Jul",
+        7 to "Aug",
+        8 to "Sept",
+        9 to "Oct",
+        10 to "Nov",
+        11 to "Dec"
+    )
+    private val dayMap = mapOf(1 to "1st",
+        2 to "2nd",
+        3 to "3rd",
+        4 to "4th",
+        5 to "5th",
+        6 to "6th",
+        7 to "7th",
+        8 to "8th",
+        9 to "9th",
+        10 to "10th",
+        11 to "11th",
+        12 to "12th",
+        13 to "13th",
+        14 to "14th",
+        15 to "15th",
+        16 to "16th",
+        17 to "17th",
+        18 to "18th",
+        19 to "19th",
+        20 to "20th",
+        21 to "21st",
+        22 to "22nd",
+        23 to "23rd",
+        24 to "24th",
+        25 to "25th",
+        26 to "26th",
+        27 to "27th",
+        28 to "28th",
+        29 to "29th",
+        30 to "30th",
+        31 to "31st")
+    private val today = LocalDateTime.now()
+    private var sday = today.dayOfMonth
+    private var smonth = today.month.value
+    private var syear = today.year
+    private var shour = 0
+    private var sminute = 0
+    private var eday = today.dayOfMonth
+    private var emonth = today.month.value
+    private var eyear = today.year
+    private var ehour = 0
+    private var eminute = 0
+    private val blank = AddPictureRVEntryModel()
+    private val photosArray: MutableList<AddPictureRVEntryModel> = mutableListOf<AddPictureRVEntryModel>(blank)
+    private val storageRef = FirebaseStorage.getInstance().reference.child("eventImages")
+    private lateinit var photosAdapter: EntryPhotoAdapter
     private lateinit var mFusedLocationClient: FusedLocationProviderClient
+
+    val pickPhotos = registerForActivityResult(ActivityResultContracts.PickMultipleVisualMedia(6)) { uris ->
+        // Callback is invoked after the user selects a media item or closes the
+        // photo picker.
+        if (uris.isNotEmpty()) {
+            for(image in uris) {
+                if(photosAdapter.itemCount <= 6){
+                    photosArray.add(photosAdapter.itemCount-1,
+                        AddPictureRVEntryModel(
+                            image,
+                            auth.currentUser!!.email,
+                            auth.currentUser!!.email + image.toString()
+                        )
+                    )
+                    photosAdapter.notifyItemInserted(photosAdapter.itemCount - 2)
+                    Log.i("recycler", "current entry count ${photosAdapter.itemCount}, added at ${photosAdapter.itemCount - 1}")
+                }
+            }
+            while(photosAdapter.itemCount > 6){
+                photosArray.removeAt(6)
+                photosAdapter.notifyItemRemoved(6)
+                Log.i("recycler", "current entry count ${photosAdapter.itemCount}, removed extra at ${6}")
+            /*
+                photosArray.add(blank)
+                Log.i("recycler", "${photosArray[photosAdapter.itemCount-1].imgPath}")
+                photosAdapter.notifyItemInserted(photosAdapter.itemCount-1)
+                Log.i("recycler", "current entry count ${photosAdapter.itemCount}, added blank at ${photosAdapter.itemCount - 1}")
+            */}
+            Log.d("PhotoPicker", "Selected URI: $uris")
+        }else{
+            Log.d("PhotoPicker", "None Selected")
+        }
+    }
     @SuppressLint("ClickableViewAccessibility")
     override fun onCreate(savedInstanceState: Bundle?) {
+        auth = Firebase.auth
+        val database = Firebase.database
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_add_party)
-        mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
+        val photosRV = findViewById<RecyclerView>(R.id.photosRecyclerView)
+        photosAdapter = EntryPhotoAdapter(this,photosArray)
+        photosRV.layoutManager = GridLayoutManager(this,3)
+        photosRV.adapter = photosAdapter
 
+        mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
         getLastLocation()
         val mapF =findViewById<View>(R.id.mapOverlay)
         val mainScrollView = findViewById<ScrollView>(R.id.addPartyScrollView)
         val partyDescription = findViewById<EditText>(R.id.PartyDescEntry)
+        val partyStart = findViewById<TextView>(R.id.PartyStartText)
+        val partyEnd = findViewById<TextView>(R.id.PartyEndText)
+        val partyName = findViewById<TextView>(R.id.PartyNameEntry)
+        val submitButton = findViewById<Button>(R.id.PartySubmitButton)
+        partyStart.setOnClickListener{
+            openStartDateDialog(partyStart)
+        }
+        partyEnd.setOnClickListener{
+            openEndDateDialog(partyEnd)
+        }
+        submitButton.setOnClickListener {
+            val myRef = database.getReference("Events")
+            val start = LocalDateTime.of(syear,smonth+1,sday,shour,sminute).toString()
+            val end = LocalDateTime.of(eyear,emonth+1,eday,ehour,eminute).toString()
+            val name = partyName.text.toString()
+            val desc = partyDescription.text.toString()
+            val photoList = mutableListOf<String>()
+            for(entry in photosArray){
+                if(entry.image.toString() != "null") {
+                    photoList.add(entry.image.toString())
+                }
+
+            }
+            val event = EventModel(auth.currentUser!!.uid, lat, long, start, end, name, desc,
+                photoList
+            )
+            myRef.child(auth.currentUser!!.uid).child(name).setValue(event).addOnSuccessListener {
+                Log.d(ContentValues.TAG, ":D")
+            }
+            auth.currentUser?.let {
+                for(photo in photoList){
+                        storageRef.child(photo.toString().replace('/','_')).putFile(photo.toUri()).addOnSuccessListener {
+                            Log.d("Update: ", "Uploaded Event Photos")
+                        }
+                    }
+            }
+
+        }
 
         val mapFragment = supportFragmentManager
             .findFragmentById(R.id.mapFragment) as SupportMapFragment
@@ -71,6 +235,71 @@ class AddPartyActivity : AppCompatActivity(), OnMapReadyCallback {
         }
 
 
+    }
+
+    private fun openStartDateDialog(textholder: TextView) {
+        val dialog = DatePickerDialog(this, DatePickerDialog.OnDateSetListener { datePicker, fyear, fmonth, fday ->
+            textholder.text = monthMap[fmonth]+" "+dayMap[fday]+", "+ fyear.toString()
+            sday = fday
+            syear = fyear
+            smonth = fmonth
+            openStartTimeDialog(textholder)
+        }, syear, smonth, sday)
+        dialog.show()
+    }
+    private fun openEndDateDialog(textholder: TextView) {
+        val dialog = DatePickerDialog(this, DatePickerDialog.OnDateSetListener { datePicker, fyear, fmonth, fday ->
+            textholder.text = monthMap[fmonth]+" "+dayMap[fday]+", "+ fyear.toString()
+            eday = fday
+            eyear = fyear
+            emonth = fmonth
+            openEndTimeDialog(textholder)
+        }, eyear, emonth, eday)
+        dialog.show()
+    }
+    private fun openStartTimeDialog(textholder: TextView) {
+        val dialog = TimePickerDialog(this, TimePickerDialog.OnTimeSetListener { timePicker, fhour, fminute ->
+            shour = fhour
+            sminute = fminute
+            textholder.append(" ")
+            var minS = "0"+sminute.toString()
+            minS = minS.substring(minS.length-2)
+            if(fhour < 13){
+                if(fhour == 12){
+                    textholder.text = textholder.text.toString() + shour.toString() + ":" + minS+"PM"
+                }else if(fhour==0){
+                    textholder.text = textholder.text.toString() +"12" + ":" + minS+"AM"
+                }else{
+                    textholder.text = textholder.text.toString() +shour.toString() + ":" + minS+"AM"
+                }
+            }else{
+                textholder.text = textholder.text.toString() +(shour-12).toString() + ":" + minS+"PM"
+            }
+
+        }, shour, sminute, false)
+        dialog.show()
+    }
+    private fun openEndTimeDialog(textholder: TextView) {
+        val dialog = TimePickerDialog(this, TimePickerDialog.OnTimeSetListener { timePicker, fhour, fminute ->
+            ehour = fhour
+            eminute = fminute
+            textholder.append(" ")
+            var minS = "0"+eminute.toString()
+            minS = minS.substring(minS.length-2)
+            if(fhour < 13){
+                if(fhour == 12){
+                    textholder.text = textholder.text.toString() +ehour.toString() + ":" + minS+"PM"
+                }else if(fhour==0){
+                    textholder.text = textholder.text.toString() +"12" + ":" + minS+"AM"
+                }else{
+                    textholder.text = textholder.text.toString() +ehour.toString() + ":" + minS+"AM"
+                }
+            }else{
+                textholder.text = textholder.text.toString() +(ehour-12).toString() + ":" + minS+"PM"
+            }
+
+        }, ehour, eminute, false)
+        dialog.show()
     }
 
     override fun onMapReady(googleMap: GoogleMap) {
@@ -186,7 +415,7 @@ class AddPartyActivity : AppCompatActivity(), OnMapReadyCallback {
         return locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER) || locationManager.isProviderEnabled(
             LocationManager.NETWORK_PROVIDER
         )
-    }
+    }/*
     @Override
     override fun onRequestPermissionsResult(
         requestCode: Int,
@@ -199,12 +428,100 @@ class AddPartyActivity : AppCompatActivity(), OnMapReadyCallback {
                 getLastLocation()
             }
         }
-    }
+    }*/
     override fun onResume() {
         super.onResume()
         if (checkPermissions()) {
             getLastLocation()
         }
     }
+    inner class EntryPhotoAdapter
+        (
+        private val context: Context,
+        private val entries: MutableList<AddPictureRVEntryModel>,
+    ): RecyclerView.Adapter<EntryPhotoAdapter.EntryViewHolder>() {
+        override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): EntryViewHolder {
+            val view = LayoutInflater.from(parent.context)
+                .inflate(R.layout.party_image_item, parent, false)
+            return EntryViewHolder(view)
+        }
 
+        override fun getItemCount() = entries.size
+
+        override fun onBindViewHolder(holder: EntryViewHolder, position: Int) {
+            val entry = entries[position]
+            /*if(position < itemCount-1) {
+                holder.item = entry
+                holder.plus.isEnabled = false
+                Glide.with(holder.itemView)
+                    .load(storageRef.child(entry.imgPath!!))
+                    .diskCacheStrategy(DiskCacheStrategy.NONE)
+                    .skipMemoryCache(true)
+                    .error(R.drawable.profile_24)
+                    .into(holder.photo)
+            }*/
+            if(entry.imgPath == null){
+                holder.plus.isEnabled = true
+                holder.photo.isEnabled = false
+            }else{
+                holder.photo.setImageURI(entry.image)
+                holder.plus.isEnabled = false
+                holder.plus.visibility = View.GONE
+                holder.photo.isEnabled = true
+            }
+            /*
+            val pickPhotos = registerForActivityResult(ActivityResultContracts.PickMultipleVisualMedia(6-(entries.size-1))) { uris ->
+                // Callback is invoked after the user selects a media item or closes the
+                // photo picker.
+                if (uris.isNotEmpty()) {
+                    entries.removeAt(entries.size-1)
+                    this.notifyItemRemoved(entries.size-1)
+                    for(image in uris){
+                        entries.add(AddPictureRVEntryModel(image, auth.currentUser!!.email,auth.currentUser!!.email+image.toString()))
+                        this.notifyItemInserted(entries.size-1)
+                    }
+                    if(entries.size < 6){
+                        entries.add(AddPictureRVEntryModel())
+                        this.notifyItemInserted(entries.size-1)
+                    }
+                    Log.d("PhotoPicker", "Selected URI: $uris")
+                }else{
+                    Log.d("PhotoPicker", "None Selected")
+                }
+            }
+            */
+            holder.plus.setOnClickListener(){
+                pickPhotos.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
+                Log.i("recycler", "${entries[itemCount-1].imgPath}")
+            }
+            holder.photo.setOnLongClickListener {
+                val pos = holder.adapterPosition
+                entries.removeAt(pos)
+                this.notifyItemRemoved(pos)
+                Log.i("recycler", "current entry count ${itemCount}, removed $position")
+                if(itemCount == 5 && entries[4].imgPath != null){
+                        entries.add(blank)
+                        this.notifyItemInserted(itemCount)
+                        Log.i("recycler", "current entry count ${itemCount}, added blank at ${itemCount-1}")
+                }
+                return@setOnLongClickListener true
+            }
+        }
+
+
+
+
+        inner class EntryViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView), View.OnClickListener {
+            var item: AddPictureRVEntryModel? = null
+            val photo: ImageView = itemView.findViewById(R.id.photo)
+            val plus: ImageView = itemView.findViewById(R.id.addPhotoIcon)
+
+            init {
+                itemView.setOnClickListener(this)
+            }
+
+            override fun onClick(p0: View?) {
+            }
+        }
+    }
 }
