@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">PartyApp</string>
+    <string name="app_name">Festiv</string>
     <string name="invitationsBNT">Invitations</string>
     <string name="eventsBNT">Events</string>
     <string name="localsBNT">Locals</string>
@@ -7,4 +7,26 @@
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="title_activity_add_party">AddPartyActivity</string>
+    <string name="app_name_lower">festiv</string>
+    <string name="password">Password</string>
+    <string name="email">Email</string>
+    <string name="login_background_description">festive pattern</string>
+    <string name="login">Login</string>
+    <string name="sign_up">Sign Up</string>
+    <string name="sign_up_underline"><u>Sign Up</u></string>
+    <string name="account_prompt">Need an account?</string>
+    <!-- Strings related to login -->
+    <string name="prompt_email">Email</string>
+    <string name="prompt_password">Password</string>
+    <string name="action_sign_in">Sign in or register</string>
+    <string name="action_sign_in_short">Sign in</string>
+    <string name="welcome">"Welcome!"</string>
+    <string name="invalid_username">Not a valid username</string>
+    <string name="invalid_password">Password must be >5 characters</string>
+    <string name="login_failed">"Login failed"</string>
+    <string name="last_name">Last Name</string>
+    <string name="name">Name</string>
+    <string name="confirm_password">Confirm Password</string>
+    <string name="logout">Logout</string>
+    <string name="logo_description">Firework Clipart</string>
 </resources>
