@@ -1,4 +1,8 @@
 <resources>
+    <string-array name="sort_options">
+        <item>Sort by Distance</item>
+        <item>Sort by Attendees</item>
+    </string-array>
     <string name="app_name">Festiv</string>
     <string name="invitationsBNT">Invitations</string>
     <string name="eventsBNT">Events</string>

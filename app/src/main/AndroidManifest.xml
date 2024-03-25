@@ -44,5 +44,4 @@
             android:exported="false"
             android:label="SignUp" />
     </application>
-
 </manifest>
