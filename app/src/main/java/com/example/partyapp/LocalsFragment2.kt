@@ -3,6 +3,7 @@ import android.Manifest
 import android.content.pm.PackageManager
 import android.location.Address
 import android.location.Geocoder
+import android.os.Build
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -11,6 +12,7 @@ import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import android.widget.EditText
 import android.widget.Toast
+import androidx.annotation.RequiresApi
 import androidx.core.app.ActivityCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -22,10 +24,6 @@ import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
-import org.threeten.bp.LocalDate
-import org.threeten.bp.format.TextStyle
-import org.threeten.bp.DayOfWeek
-import org.threeten.bp.format.DateTimeFormatter
 import java.util.Locale
 import com.google.android.gms.location.LocationServices
 import kotlin.math.pow
@@ -33,7 +31,11 @@ import kotlin.math.pow
 //import com.google.firebase.database.core.view.View
 import com.google.firebase.database.database
 import com.google.firebase.initialize
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
+import java.time.format.TextStyle
 
+@RequiresApi(Build.VERSION_CODES.O)
 class LocalsFragment2 : Fragment() {
     private lateinit var recyclerView: RecyclerView
     private lateinit var adapter: LocalsAdapter

@@ -43,5 +43,8 @@
         <activity android:name=".SignUpActivity"
             android:exported="false"
             android:label="SignUp" />
+        <activity android:name=".LocalsExtra"
+            android:exported="false"
+            android:label="Locals" />
     </application>
 </manifest>

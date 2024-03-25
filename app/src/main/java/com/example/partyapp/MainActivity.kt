@@ -1,7 +1,9 @@
 package com.example.partyapp
 
+import android.os.Build
 import android.os.Bundle
 import android.view.View
+import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import com.google.android.material.bottomnavigation.BottomNavigationView
@@ -10,6 +12,7 @@ import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 
 
+@RequiresApi(Build.VERSION_CODES.O)
 class MainActivity : AppCompatActivity() {
 
     private fun replaceFragment(fragment: Fragment) {
@@ -32,7 +35,7 @@ class MainActivity : AppCompatActivity() {
                 lateinit var fragment: Fragment
                 when (item.itemId) {
                     R.id.eventsBN -> fragment = MyEventsFragment()
-                    R.id.localsBN -> fragment = ProfileFragment1()
+                    R.id.localsBN -> fragment = LocalsFragment2()
                     R.id.profileBN -> fragment = LoginFragment()
                 }
                 replaceFragment(fragment)
@@ -49,7 +52,7 @@ class MainActivity : AppCompatActivity() {
                 when (item.itemId) {
                     R.id.invitationsBN -> fragment = InvitationsFragment()
                     R.id.eventsBN -> fragment = MyEventsFragment()
-                    R.id.localsBN -> fragment = ProfileFragment1()
+                    R.id.localsBN -> fragment = LocalsFragment2()
                     R.id.profileBN -> fragment = ProfileFragment()
                 }
                 replaceFragment(fragment)
