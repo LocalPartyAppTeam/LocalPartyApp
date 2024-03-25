@@ -120,7 +120,7 @@ class AddPartyActivity : AppCompatActivity(), OnMapReadyCallback {
     private var eday = today.dayOfMonth
     private var emonth = today.month.value
     private var eyear = today.year
-    private var ehour = 0
+    private var ehour = 1
     private var eminute = 0
     private val blank = AddPictureRVEntryModel()
     private val photosArray: MutableList<AddPictureRVEntryModel> = mutableListOf<AddPictureRVEntryModel>(blank)
@@ -212,7 +212,8 @@ class AddPartyActivity : AppCompatActivity(), OnMapReadyCallback {
                         }
                     }
             }
-
+            startActivity(Intent(this@AddPartyActivity, MainActivity::class.java))
+            finish()
         }
 
         val mapFragment = supportFragmentManager

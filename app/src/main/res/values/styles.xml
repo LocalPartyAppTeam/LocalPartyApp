@@ -76,5 +76,4 @@
         <item name="android:textColor">@color/white</item>
         <item name="android:textFontWeight" tools:targetApi="p">1000</item>
     </style>
-
 </resources>
