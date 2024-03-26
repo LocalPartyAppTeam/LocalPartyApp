@@ -46,6 +46,10 @@ class MyEventsFragment : Fragment() {
         launchActivity.setOnClickListener {
             startActivity(Intent(activity, AddPartyActivity::class.java))
         }
+        val launchActivity2 = view.findViewById<ImageView>(R.id.eventsFragmentAddEstablishmentButton)
+        launchActivity2.setOnClickListener {
+            startActivity(Intent(activity, AddEstablishmentActivity::class.java))
+        }
         return view
     }
 

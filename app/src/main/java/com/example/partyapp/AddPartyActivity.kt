@@ -19,7 +19,6 @@ import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
-import android.widget.DatePicker
 import android.widget.EditText
 import android.widget.ImageView
 import android.widget.ScrollView
@@ -30,15 +29,9 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
-import androidx.core.graphics.drawable.toIcon
 import androidx.core.net.toUri
-import androidx.core.util.rangeTo
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.bumptech.glide.Glide
-import com.bumptech.glide.load.engine.DiskCacheStrategy
-import com.example.partyapp.place.Place
-import com.example.partyapp.place.PlacesReader
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationCallback
 import com.google.android.gms.location.LocationRequest
@@ -443,7 +436,7 @@ class AddPartyActivity : AppCompatActivity(), OnMapReadyCallback {
     ): RecyclerView.Adapter<EntryPhotoAdapter.EntryViewHolder>() {
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): EntryViewHolder {
             val view = LayoutInflater.from(parent.context)
-                .inflate(R.layout.party_image_item, parent, false)
+                .inflate(R.layout.rv_listing_image_item, parent, false)
             return EntryViewHolder(view)
         }
 

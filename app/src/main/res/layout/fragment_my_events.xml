@@ -22,6 +22,20 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintVertical_bias="0.974" />
+
+        <ImageView
+            android:id="@+id/eventsFragmentAddEstablishmentButton"
+            android:layout_width="75dp"
+            android:layout_height="75dp"
+            android:background="@drawable/circular_button"
+            app:tint="@color/black"
+            android:src="@drawable/baseline_add_24"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.952"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.794" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 </FrameLayout>
