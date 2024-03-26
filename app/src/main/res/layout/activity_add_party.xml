@@ -196,7 +196,7 @@
                 android:layout_marginTop="20dp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                tools:listitem="@layout/party_image_item"/>
+                tools:listitem="@layout/rv_listing_image_item"/>
 
             <Button
                 android:id="@+id/PartySubmitButton"
