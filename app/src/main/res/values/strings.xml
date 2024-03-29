@@ -33,4 +33,5 @@
     <string name="confirm_password">Confirm Password</string>
     <string name="logout">Logout</string>
     <string name="logo_description">Firework Clipart</string>
+    <string name="title_activity_add_establishment">title_activity_activity_add_establishment\n</string>
 </resources>

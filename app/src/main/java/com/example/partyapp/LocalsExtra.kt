@@ -35,17 +35,11 @@ class LocalsExtra : AppCompatActivity() {
         dayOfMonthTextView.text = dayOfMonth
         descriptionTextView.text = description
 
-        Toast.makeText(this,imagePathsArray[0].toString(),Toast.LENGTH_LONG).show()
+//        Toast.makeText(this,imagePathsArray[0].toString(),Toast.LENGTH_LONG).show()
 
         val concatenatedPaths = imagePathsArray.take(6).joinToString("\n")
-
-        // Find TextView for image paths
         val imagePathsTextView = findViewById<TextView>(R.id.imagePathsTextView)
-
-        // Set concatenated paths to the TextView
         imagePathsTextView.text = concatenatedPaths
-
-        // Show a toast if there are more than 6 image paths
         if (imagePathsArray.size > 6) {
             Toast.makeText(this, "Only the first 6 image paths are displayed", Toast.LENGTH_SHORT).show()
         }

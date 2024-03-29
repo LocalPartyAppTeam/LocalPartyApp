@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <TextView
+        android:id="@+id/textView_establishmentName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Establishment Name"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:layout_editor_absoluteX="83dp"
+        tools:layout_editor_absoluteY="139dp" />
+
+    <TextView
+        android:id="@+id/textView_owner"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Owner"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView_establishmentName"
+        tools:layout_editor_absoluteX="83dp"
+        tools:layout_editor_absoluteY="174dp" />
+
+    <TextView
+        android:id="@+id/textView_address"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Address"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView_owner"
+        tools:layout_editor_absoluteX="83dp"
+        tools:layout_editor_absoluteY="209dp" />
+
+    <TextView
+        android:id="@+id/textView_description"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Description"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView_address"
+        tools:layout_editor_absoluteX="83dp"
+        tools:layout_editor_absoluteY="244dp" />
+
+    <TextView
+        android:id="@+id/textView_distance"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Distance"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView_description"
+        tools:layout_editor_absoluteX="83dp"
+        tools:layout_editor_absoluteY="279dp" />
+</androidx.constraintlayout.widget.ConstraintLayout>
