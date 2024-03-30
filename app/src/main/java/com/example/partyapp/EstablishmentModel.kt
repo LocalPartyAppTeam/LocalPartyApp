@@ -6,4 +6,7 @@ data class EstablishmentModel(
     var long: Double?= null,
     var name: String?= null,
     var desc: String?= null,
-    var imgPaths: MutableList<String>?= null)
+    var imgPaths: MutableList<String>?= null,
+    var tags: MutableList<String>?= null,
+    var sanitizedTags: MutableList<String>?= null
+)

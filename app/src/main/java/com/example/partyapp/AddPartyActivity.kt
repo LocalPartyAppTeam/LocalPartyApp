@@ -32,6 +32,8 @@ import androidx.core.app.ActivityCompat
 import androidx.core.net.toUri
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import androidx.recyclerview.widget.StaggeredGridLayoutManager
+import com.google.android.flexbox.FlexboxLayoutManager
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationCallback
 import com.google.android.gms.location.LocationRequest
@@ -117,6 +119,7 @@ class AddPartyActivity : AppCompatActivity(), OnMapReadyCallback {
     private var eminute = 0
     private val blank = AddPictureRVEntryModel()
     private val photosArray: MutableList<AddPictureRVEntryModel> = mutableListOf<AddPictureRVEntryModel>(blank)
+    private val tagsArray: MutableList<TagModel> = mutableListOf<TagModel>()
     private val storageRef = FirebaseStorage.getInstance().reference.child("eventImages")
     private lateinit var photosAdapter: EntryPhotoAdapter
     private lateinit var mFusedLocationClient: FusedLocationProviderClient
@@ -161,8 +164,17 @@ class AddPartyActivity : AppCompatActivity(), OnMapReadyCallback {
         setContentView(R.layout.activity_add_party)
         val photosRV = findViewById<RecyclerView>(R.id.photosRecyclerView)
         photosAdapter = EntryPhotoAdapter(this,photosArray)
-        photosRV.layoutManager = GridLayoutManager(this,3)
+        val layoutManager = GridLayoutManager(this,3)
+        photosRV.layoutManager = layoutManager
         photosRV.adapter = photosAdapter
+
+
+        val tagEntry = findViewById<EditText>(R.id.PartyTagEntry)
+        val addTagButton = findViewById<Button>(R.id.PartyAddTagButton)
+        val tagsRV = findViewById<RecyclerView>(R.id.partyTagsRecyclerView)
+        val tagsAdapter = TagsAdapter(true, tagsArray)
+        tagsRV.layoutManager = FlexboxLayoutManager(this)
+        tagsRV.adapter = tagsAdapter
 
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
         getLastLocation()
@@ -173,6 +185,13 @@ class AddPartyActivity : AppCompatActivity(), OnMapReadyCallback {
         val partyEnd = findViewById<TextView>(R.id.PartyEndText)
         val partyName = findViewById<TextView>(R.id.PartyNameEntry)
         val submitButton = findViewById<Button>(R.id.PartySubmitButton)
+        addTagButton.setOnClickListener{
+            if(tagEntry.text.toString() != ""){
+                val tag = TagModel(text = tagEntry.text.toString())
+                tagsArray.add(tag)
+                tagsAdapter.notifyItemInserted(tagsAdapter.itemCount-1)
+            }
+        }
         partyStart.setOnClickListener{
             openStartDateDialog(partyStart)
         }
@@ -180,20 +199,31 @@ class AddPartyActivity : AppCompatActivity(), OnMapReadyCallback {
             openEndDateDialog(partyEnd)
         }
         submitButton.setOnClickListener {
-            val myRef = database.getReference("Events")
+            val myRef = database.getReference("TaggedEvents")
             val start = LocalDateTime.of(syear,smonth+1,sday,shour,sminute).toString()
             val end = LocalDateTime.of(eyear,emonth+1,eday,ehour,eminute).toString()
             val name = partyName.text.toString()
             val desc = partyDescription.text.toString()
             val photoList = mutableListOf<String>()
+            val tagsList = mutableListOf<String>()
+            val sanTagsList = mutableListOf<String>()
             for(entry in photosArray){
                 if(entry.image.toString() != "null") {
                     photoList.add(entry.image.toString())
                 }
-
+            }
+            for(entry in tagsArray){
+                var tagText = entry.text!!
+                tagsList.add(tagText)
+                tagText = tagText.lowercase()
+                val re = Regex("[^A-Za-z0-9 ]")
+                tagText = re.replace(tagText, "")
+                sanTagsList.add(tagText)
             }
             val event = EventModel(auth.currentUser!!.uid, lat, long, start, end, name, desc,
-                photoList
+                photoList,
+                tagsList,
+                sanTagsList
             )
             myRef.child(auth.currentUser!!.uid).child(name).setValue(event).addOnSuccessListener {
                 Log.d(ContentValues.TAG, ":D")

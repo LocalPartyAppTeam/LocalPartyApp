@@ -35,6 +35,7 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.google.android.flexbox.FlexboxLayoutManager
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationCallback
 import com.google.android.gms.location.LocationRequest
@@ -66,6 +67,7 @@ class AddEstablishmentActivity : AppCompatActivity(), OnMapReadyCallback {
     private val today = LocalDateTime.now()
     private val blank = AddPictureRVEntryModel()
     private val photosArray: MutableList<AddPictureRVEntryModel> = mutableListOf<AddPictureRVEntryModel>(blank)
+    private val tagsArray: MutableList<TagModel> = mutableListOf<TagModel>()
     private val storageRef = FirebaseStorage.getInstance().reference.child("establishmentImages")
     private lateinit var photosAdapter: EntryPhotoAdapter
     private lateinit var mFusedLocationClient: FusedLocationProviderClient
@@ -113,6 +115,20 @@ class AddEstablishmentActivity : AppCompatActivity(), OnMapReadyCallback {
         photosRV.layoutManager = GridLayoutManager(this,3)
         photosRV.adapter = photosAdapter
 
+        val tagEntry = findViewById<EditText>(R.id.EstTagEntry)
+        val addTagButton = findViewById<Button>(R.id.EstAddTagButton)
+        val tagsRV = findViewById<RecyclerView>(R.id.estTagsRecyclerView)
+        val tagsAdapter = TagsAdapter(true, tagsArray)
+        tagsRV.layoutManager = FlexboxLayoutManager(this)
+        tagsRV.adapter = tagsAdapter
+
+        addTagButton.setOnClickListener{
+            if(tagEntry.text.toString() != ""){
+                val tag = TagModel(text = tagEntry.text.toString())
+                tagsArray.add(tag)
+                tagsAdapter.notifyItemInserted(tagsAdapter.itemCount-1)
+            }
+        }
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
         getLastLocation()
         val mapF =findViewById<View>(R.id.mapOverlay)
@@ -121,18 +137,29 @@ class AddEstablishmentActivity : AppCompatActivity(), OnMapReadyCallback {
         val establishmentName = findViewById<TextView>(R.id.EstablishmentNameEntry)
         val submitButton = findViewById<Button>(R.id.EstablishmentSubmitButton)
         submitButton.setOnClickListener {
-            val myRef = database.getReference("Establishments")
+            val myRef = database.getReference("TaggedEstablishments")
             val name = establishmentName.text.toString()
             val desc = establishmentDescription.text.toString()
             val photoList = mutableListOf<String>()
+            val tagsList = mutableListOf<String>()
+            val sanTagsList = mutableListOf<String>()
             for(entry in photosArray){
                 if(entry.image.toString() != "null") {
                     photoList.add(entry.image.toString())
                 }
-
+            }
+            for(entry in tagsArray){
+                var tagText = entry.text!!
+                tagsList.add(tagText)
+                tagText = tagText.lowercase()
+                val re = Regex("[^A-Za-z0-9 ]")
+                tagText = re.replace(tagText, "")
+                sanTagsList.add(tagText)
             }
             val establishment = EstablishmentModel(auth.currentUser!!.uid, lat, long, name, desc,
-                photoList
+                photoList,
+                tagsList,
+                sanTagsList
             )
             myRef.child(auth.currentUser!!.uid).child(name).setValue(establishment).addOnSuccessListener {
                 Log.d(ContentValues.TAG, ":D")
