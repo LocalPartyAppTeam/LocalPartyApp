@@ -1,57 +1,68 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
+    <!-- ImageView at the top -->
+    <ImageView
+        android:id="@+id/imageView"
+        android:layout_width="match_parent"
+        android:layout_height="250dp"
+        android:scaleType="centerCrop"
+        android:src="@drawable/randomprofilepic2" />
+
+    <!-- TextView for Establishment Name -->
     <TextView
         android:id="@+id/textView_establishmentName"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_below="@id/imageView"
+        android:layout_marginTop="16dp"
         android:text="Establishment Name"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        tools:layout_editor_absoluteX="83dp"
-        tools:layout_editor_absoluteY="139dp" />
+        android:textSize="24sp"
+        android:textStyle="bold" />
 
-    <TextView
-        android:id="@+id/textView_owner"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Owner"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView_establishmentName"
-        tools:layout_editor_absoluteX="83dp"
-        tools:layout_editor_absoluteY="174dp" />
-
-    <TextView
-        android:id="@+id/textView_address"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Address"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView_owner"
-        tools:layout_editor_absoluteX="83dp"
-        tools:layout_editor_absoluteY="209dp" />
-
+    <!-- TextView for Description -->
     <TextView
         android:id="@+id/textView_description"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Description"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView_address"
-        tools:layout_editor_absoluteX="83dp"
-        tools:layout_editor_absoluteY="244dp" />
+        android:layout_below="@id/textView_establishmentName"
+        android:layout_marginTop="16dp"
+        android:text="Description" />
 
+    <!-- Horizontal line -->
+    <View
+        android:id="@+id/line"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_below="@id/textView_description"
+        android:layout_marginTop="16dp"
+        android:background="@android:color/black" />
+
+    <!-- TextView for Address -->
     <TextView
-        android:id="@+id/textView_distance"
-        android:layout_width="wrap_content"
+        android:id="@+id/textView_address"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Distance"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView_description"
-        tools:layout_editor_absoluteX="83dp"
-        tools:layout_editor_absoluteY="279dp" />
-</androidx.constraintlayout.widget.ConstraintLayout>
+        android:layout_below="@id/line"
+        android:layout_marginTop="16dp"
+        android:text="Address" />
+
+    <!-- Address View (e.g., Google Maps view) -->
+    <com.google.android.gms.maps.MapView
+        android:id="@+id/mapView"
+        android:layout_width="match_parent"
+        android:layout_height="200dp"
+        android:layout_below="@id/textView_address"
+        android:layout_marginTop="16dp" />
+    <!-- TextView for Pictures -->
+    <TextView
+        android:id="@+id/textView_pictures"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/textView_address"
+        android:layout_marginTop="16dp"
+        android:text="Pictures" />
+
+</RelativeLayout>

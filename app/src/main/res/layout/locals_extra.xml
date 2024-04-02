@@ -1,105 +1,72 @@
-<?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
+    <!-- ImageView covering 25% of the screen -->
+    <ImageView
+        android:id="@+id/imageview"
+        android:layout_width="match_parent"
+        android:layout_height="250dp"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentEnd="true"
+        android:layout_weight="1"
+        android:scaleType="centerCrop"
+        android:src="@drawable/randomprofilepic1" />
+
+    <!-- TextView for Event Name -->
     <TextView
         android:id="@+id/eventNameTextView"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_below="@id/imageview"
         android:text="Event Name"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        android:layout_margin="16dp"/>
+        android:textSize="24sp"
+        android:textStyle="bold" />
 
-    <TextView
-        android:id="@+id/hostNameTextView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Host"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/eventNameTextView"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="8dp"/>
-
+    <!-- TextView for Address -->
     <TextView
         android:id="@+id/addressTextView"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Address"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/hostNameTextView"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="8dp"/>
+        android:layout_below="@id/eventNameTextView"
+        android:text="Event Address"
+        android:textSize="16sp" />
 
+    <!-- TextView for Time/Date -->
     <TextView
         android:id="@+id/timeTextView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/addressTextView"
+        android:text="Event Time/Date"
+        android:textSize="16sp" />
+
+    <!-- Button to see who is going -->
+    <Button
+        android:id="@+id/see_who_is_going"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Time"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/addressTextView"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="8dp"/>
+        android:layout_below="@id/timeTextView"
+        android:text="SEE WHO IS GOING" />
 
-    <TextView
-        android:id="@+id/distanceTextView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Distance"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/timeTextView"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="8dp"/>
-
-    <TextView
-        android:id="@+id/dayOfWeekTextView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Day of Week"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/distanceTextView"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="8dp"/>
-
-    <TextView
-        android:id="@+id/dayOfMonthTextView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Day of Month"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/dayOfWeekTextView"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="8dp"/>
-
+    <!-- TextView for Event Description -->
     <TextView
         android:id="@+id/descriptionTextView"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Description"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/dayOfMonthTextView"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="8dp"/>
+        android:layout_below="@id/see_who_is_going"
+        android:text="Event Description"
+        android:textSize="16sp" />
 
-    <TextView
-        android:id="@+id/imagePathsTextView"
-        android:layout_width="0dp"
+    <!-- Green button to join event -->
+    <Button
+        android:id="@+id/join_event"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:maxLines="6"
-        android:scrollbars="vertical"
-        android:text="Image Paths"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/descriptionTextView"
-    app:layout_constraintBottom_toBottomOf="parent"
-    app:layout_constraintVertical_bias="0.0"
-    android:layout_marginStart="16dp"
-    android:layout_marginTop="8dp"
-    android:layout_marginEnd="16dp"
-    android:layout_marginBottom="8dp"/>
+        android:layout_below="@id/descriptionTextView"
+        android:text="JOIN EVENT"
+        android:background="@android:color/holo_green_dark"
+        android:textColor="@android:color/white" />
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+</RelativeLayout>

@@ -19,30 +19,30 @@ class LocalsExtra : AppCompatActivity() {
         val description = intent.getStringExtra("description")
         val imagePathsArray = intent.getStringArrayExtra("imagePaths")?.toList() ?: emptyList()
         val eventNameTextView = findViewById<TextView>(R.id.eventNameTextView)
-        val hostNameTextView = findViewById<TextView>(R.id.hostNameTextView)
+//        val hostNameTextView = findViewById<TextView>(R.id.hostNameTextView)
         val addressTextView = findViewById<TextView>(R.id.addressTextView)
         val timeTextView = findViewById<TextView>(R.id.timeTextView)
-        val distanceTextView = findViewById<TextView>(R.id.distanceTextView)
-        val dayOfWeekTextView = findViewById<TextView>(R.id.dayOfWeekTextView)
-        val dayOfMonthTextView = findViewById<TextView>(R.id.dayOfMonthTextView)
+//        val distanceTextView = findViewById<TextView>(R.id.distanceTextView)
+//        val dayOfWeekTextView = findViewById<TextView>(R.id.dayOfWeekTextView)
+//        val dayOfMonthTextView = findViewById<TextView>(R.id.dayOfMonthTextView)
         val descriptionTextView = findViewById<TextView>(R.id.descriptionTextView)
         eventNameTextView.text = eventName
-        hostNameTextView.text = host
+//        hostNameTextView.text = host
         addressTextView.text = address
         timeTextView.text = time
-        distanceTextView.text = distance
-        dayOfWeekTextView.text = dayOfWeek
-        dayOfMonthTextView.text = dayOfMonth
+//        distanceTextView.text = distance
+//        dayOfWeekTextView.text = dayOfWeek
+//        dayOfMonthTextView.text = dayOfMonth
         descriptionTextView.text = description
 
 //        Toast.makeText(this,imagePathsArray[0].toString(),Toast.LENGTH_LONG).show()
 
         val concatenatedPaths = imagePathsArray.take(6).joinToString("\n")
-        val imagePathsTextView = findViewById<TextView>(R.id.imagePathsTextView)
-        imagePathsTextView.text = concatenatedPaths
-        if (imagePathsArray.size > 6) {
-            Toast.makeText(this, "Only the first 6 image paths are displayed", Toast.LENGTH_SHORT).show()
-        }
+//        val imagePathsTextView = findViewById<TextView>(R.id.imagePathsTextView)
+//        imagePathsTextView.text = concatenatedPaths
+//        if (imagePathsArray.size > 6) {
+//            Toast.makeText(this, "Only the first 6 image paths are displayed", Toast.LENGTH_SHORT).show()
+//        }
 
 //        Toast.makeText(this,eventName,Toast.LENGTH_LONG).show()
 
