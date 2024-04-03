@@ -32,7 +32,6 @@ import androidx.core.app.ActivityCompat
 import androidx.core.net.toUri
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.google.android.flexbox.FlexboxLayoutManager
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationCallback
@@ -123,7 +122,7 @@ class AddPartyActivity : AppCompatActivity(), OnMapReadyCallback {
     private val storageRef = FirebaseStorage.getInstance().reference.child("eventImages")
     private lateinit var photosAdapter: EntryPhotoAdapter
     private lateinit var mFusedLocationClient: FusedLocationProviderClient
-
+    private val geoHelper = GeoHelper(this)
     val pickPhotos = registerForActivityResult(ActivityResultContracts.PickMultipleVisualMedia(6)) { uris ->
         // Callback is invoked after the user selects a media item or closes the
         // photo picker.
@@ -158,6 +157,11 @@ class AddPartyActivity : AppCompatActivity(), OnMapReadyCallback {
     }
     @SuppressLint("ClickableViewAccessibility")
     override fun onCreate(savedInstanceState: Bundle?) {
+        val loc = geoHelper.requestLocation()
+        if(loc != null){
+            lat = loc[0]
+            long = loc[1]
+        }
         auth = Firebase.auth
         val database = Firebase.database
         super.onCreate(savedInstanceState)
@@ -177,7 +181,6 @@ class AddPartyActivity : AppCompatActivity(), OnMapReadyCallback {
         tagsRV.adapter = tagsAdapter
 
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
-        getLastLocation()
         val mapF =findViewById<View>(R.id.mapOverlay)
         val mainScrollView = findViewById<ScrollView>(R.id.addPartyScrollView)
         val partyDescription = findViewById<EditText>(R.id.PartyDescEntry)
@@ -207,6 +210,7 @@ class AddPartyActivity : AppCompatActivity(), OnMapReadyCallback {
             val photoList = mutableListOf<String>()
             val tagsList = mutableListOf<String>()
             val sanTagsList = mutableListOf<String>()
+            val address = geoHelper.getAddress(lat,long)
             for(entry in photosArray){
                 if(entry.image.toString() != "null") {
                     photoList.add(entry.image.toString())
@@ -220,7 +224,7 @@ class AddPartyActivity : AppCompatActivity(), OnMapReadyCallback {
                 tagText = re.replace(tagText, "")
                 sanTagsList.add(tagText)
             }
-            val event = EventModel(auth.currentUser!!.uid, lat, long, start, end, name, desc,
+            val event = EventModel(auth.currentUser!!.uid, lat, long, address, start, end, name, desc,
                 photoList,
                 tagsList,
                 sanTagsList
@@ -331,13 +335,12 @@ class AddPartyActivity : AppCompatActivity(), OnMapReadyCallback {
         // method to get the location
         getLastLocation()
         val location = LatLng(lat, long)
-        Log.i("testdata","lat: ${long}")
+        Log.i("testdata","long: ${long}")
         Log.i("testdata","lat: ${lat}")
         googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(location, 12F))
         googleMap.addMarker(
             MarkerOptions()
                 .position(location)
-                .title("Newark")
         )
         googleMap.setOnMapClickListener {
                 googleMap.clear()
@@ -349,8 +352,11 @@ class AddPartyActivity : AppCompatActivity(), OnMapReadyCallback {
                 googleMap.addMarker(
                     markerOptions
                 )
+                lat = it.latitude
+                long = it.longitude
         }
     }
+
     @SuppressLint("MissingPermission")
     private fun getLastLocation(){
         // check if permissions are given
@@ -426,7 +432,7 @@ class AddPartyActivity : AppCompatActivity(), OnMapReadyCallback {
             android.Manifest.permission.ACCESS_FINE_LOCATION
         ) == PackageManager.PERMISSION_GRANTED;
     }
-        private fun requestPermissions() {
+    private fun requestPermissions() {
         ActivityCompat.requestPermissions(
             this, arrayOf<String>(
                 android.Manifest.permission.ACCESS_COARSE_LOCATION,
@@ -459,11 +465,13 @@ class AddPartyActivity : AppCompatActivity(), OnMapReadyCallback {
             getLastLocation()
         }
     }
+
     inner class EntryPhotoAdapter
         (
         private val context: Context,
         private val entries: MutableList<AddPictureRVEntryModel>,
-    ): RecyclerView.Adapter<EntryPhotoAdapter.EntryViewHolder>() {
+    ): RecyclerView.Adapter<EntryPhotoAdapter.EntryViewHolder>()
+    {
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): EntryViewHolder {
             val view = LayoutInflater.from(parent.context)
                 .inflate(R.layout.rv_listing_image_item, parent, false)

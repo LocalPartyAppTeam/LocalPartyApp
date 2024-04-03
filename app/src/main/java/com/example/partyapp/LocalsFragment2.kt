@@ -1,15 +1,14 @@
 package com.example.partyapp
 import android.Manifest
 import android.content.pm.PackageManager
-import android.location.Address
 import android.location.Geocoder
 import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ArrayAdapter
 import android.widget.EditText
 import android.widget.Toast
 import androidx.annotation.RequiresApi
@@ -17,7 +16,6 @@ import androidx.core.app.ActivityCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.gms.location.FusedLocationProviderClient
-import com.google.firebase.Firebase
 import com.google.firebase.FirebaseApp
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
@@ -29,8 +27,6 @@ import com.google.android.gms.location.LocationServices
 import kotlin.math.pow
 
 //import com.google.firebase.database.core.view.View
-import com.google.firebase.database.database
-import com.google.firebase.initialize
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import java.time.format.TextStyle
@@ -62,7 +58,12 @@ class LocalsFragment2 : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
 
-        requestLocation()
+        val geoHelper = GeoHelper(requireContext())
+        val loc = geoHelper.requestLocation()
+        if(loc != null){
+            currentLatitude = loc[0]
+            currentLongitude = loc[1]
+        }
         val view = inflater.inflate(R.layout.fragment_locals, container, false)
         recyclerView = view.findViewById(R.id.recycler_locals)
         val navigationBarHeight = resources.getDimensionPixelSize(com.google.android.material.R.dimen.design_bottom_navigation_height)
@@ -77,10 +78,10 @@ class LocalsFragment2 : Fragment() {
          */
 
 
-        val databaseReference = FirebaseDatabase.getInstance().getReference("Establishments")
+        val databaseReference = FirebaseDatabase.getInstance().getReference("TaggedEstablishments")
         databaseReference.addListenerForSingleValueEvent(object : ValueEventListener {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
-                val establishmentsList = mutableListOf<LocalEstablishment>()
+                val establishmentsList = mutableListOf<EstablishmentModel>()
                 for (uniqueIDSnapshot in dataSnapshot.children) {
                     val uniqueID = uniqueIDSnapshot.key
                     uniqueID?.let {
@@ -92,9 +93,7 @@ class LocalsFragment2 : Fragment() {
                                 val name = establishmentSnapshot.child("name").getValue(String::class.java)
                                 val desc = establishmentSnapshot.child("desc").getValue(String::class.java)
                                 val owner = establishmentSnapshot.child("ownerAccount").getValue(String::class.java)
-                                var distanceE = 0.0
-                                if(lat != null && long != null) distanceE = calculateDistance(currentLatitude, currentLongitude, lat, long)
-                                val establishmentAddress = getAddress(lat,long)
+                                val estAddress = geoHelper.getAddress(lat,long)
                                 val imgPathsSnapshot = establishmentSnapshot.child("imgPaths")
                                 val imagePaths = mutableListOf<String>()
                                 for (imageSnapshot in imgPathsSnapshot.children) {
@@ -103,16 +102,32 @@ class LocalsFragment2 : Fragment() {
                                         imagePaths.add(it)
                                     }
                                 }
+                                val tagsSnapshot = establishmentSnapshot.child("tags")
+                                val tags = mutableListOf<String>()
+                                for (tagSnapshot in tagsSnapshot.children) {
+                                    val tag = tagSnapshot.getValue(String::class.java)
+                                    tag?.let {
+                                        tags.add(it)
+                                    }
+                                }
+                                val sanTagsSnapshot = establishmentSnapshot.child("sanitizedTags")
+                                val sanTags = mutableListOf<String>()
+                                for (sanTagSnapshot in sanTagsSnapshot.children) {
+                                    val sanTag = sanTagSnapshot.getValue(String::class.java)
+                                    sanTag?.let {
+                                        sanTags.add(it)
+                                    }
+                                }
                                 ///i need establishmentName, address, distance, description, ownerAccount,iP
                                 // Create Establishment object and add to the list
-                                val establishment = LocalEstablishment(name,establishmentAddress,distanceE.toString(),desc,owner,imagePaths)
+                                val establishment = EstablishmentModel(owner,lat,long,name,desc,estAddress,imagePaths,tags,sanTags)
                                 establishmentsList.add(establishment)
 
                             }
                         }
                     }
                 }
-                adapterE = LocalEstablishmentAdapter(establishmentsList)
+                adapterE = LocalEstablishmentAdapter(arrayOf(currentLatitude, currentLongitude), geoHelper, establishmentsList)
                 recyclerViewE.adapter = adapterE
             }
 
@@ -130,11 +145,11 @@ class LocalsFragment2 : Fragment() {
         the below is to add the information of for the local events firebase and adding to adapter
          */
         ///random events will add from firebase later
-        eventsReference = FirebaseDatabase.getInstance().getReference("Events")
+        eventsReference = FirebaseDatabase.getInstance().getReference("TaggedEvents")
         //Toast.makeText(requireContext(),"EventsReference path: ${eventsReference}",Toast.LENGTH_LONG).show()
         eventsReference.addListenerForSingleValueEvent(object : ValueEventListener {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
-                val localsList = mutableListOf<LocalItem>()
+                val localsList = mutableListOf<EventModel>()
                 for (userSnapshot in dataSnapshot.children){
                     val userId = userSnapshot.key ///the host
                     userId?.let {
@@ -153,10 +168,10 @@ class LocalsFragment2 : Fragment() {
                             val endDate = LocalDate.parse(eventEnd, dateFormatter)
                             val dayOfWeek = getDayOfWeek(startDate)
                             val dayOfMonth = getDayofMonth(startDate)
-                            val address = getAddress(eventLat,eventLong)
+                            val address = geoHelper.getAddress(eventLat,eventLong)
                             var distance = 0.0
 
-                            if(eventLat != null && eventLong != null) distance = calculateDistance(currentLatitude, currentLongitude, eventLat, eventLong)
+                            if(eventLat != null && eventLong != null) distance = geoHelper.calculateDistance(currentLatitude, currentLongitude, eventLat, eventLong)
 //                            Toast.makeText(requireContext(),dayOfWeek.toString(),Toast.LENGTH_SHORT).show()
                             /* structure of card item
                             val eventName: String,
@@ -183,16 +198,40 @@ class LocalsFragment2 : Fragment() {
                                     imagePaths.add(it)
                                 }
                             }
-                            val localItem = LocalItem(eventName.toString(), eventHost.toString(), address.toString(), startTime, endTime, round(distance*0.621371,2).toString() + " mi", dayOfWeek, dayOfMonth,eventStart, eventDesc,imagePaths)
-                            localsList.add(localItem)
+                            val tagsSnapshot = eventSnapshot.child("tags")
+                            val tags = mutableListOf<String>()
+                            for (tagSnapshot in tagsSnapshot.children) {
+                                val tag = tagSnapshot.getValue(String::class.java)
+                                tag?.let {
+                                    tags.add(it)
+                                    Log.i("TagsLF2","tag $it")
+                                }
+                            }
+
+                            val sanTagsSnapshot = eventSnapshot.child("sanitizedTags")
+                            val sanTags = mutableListOf<String>()
+                            for (sanTagSnapshot in sanTagsSnapshot.children) {
+                                val sanTag = sanTagSnapshot.getValue(String::class.java)
+                                sanTag?.let {
+                                    sanTags.add(it)
+                                    Log.i("TagsLF2","santag $it")
+                                }
+                            }
+
+                            Log.i("TagsLF2","tags array size ${tags!!.size}")
+                            val localEvent = EventModel(eventHost.toString(), eventLat, eventLong,
+                                address.toString(), eventStart, eventEnd, eventName.toString(),
+                                eventDesc, imagePaths, tags, sanTags)
+                            Log.i("TagsLF2","tags array size after insert ${localEvent.tags!!.size}")
+                            localsList.add(localEvent)
                         }
                     }
                 }
 //                localsList.add(LocalItem("Event 1", "Host 1", "Address 1", "Time 1", "Date 1", "Mon","20"))
 //                localsList.sortBy { it.distance?.toDouble() }
 
-                localsList.sortBy { it.distance?.replace(" mi", "")?.toDouble() }
-                adapter = LocalsAdapter(localsList)
+                localsList.sortBy { geoHelper.calculateDistance(it.lat!!,it.long!!,currentLatitude,currentLongitude) }
+                adapter = LocalsAdapter(arrayOf(currentLatitude,currentLongitude), geoHelper, localsList)
                 recyclerView.adapter = adapter
             }
 
@@ -218,61 +257,6 @@ class LocalsFragment2 : Fragment() {
         return date.dayOfMonth.toString()
     }
 
-    private fun getAddress(latitude: Double?, longitude: Double?): String? {
-        if (latitude == null || longitude == null) return null
-        try {
-            val addresses: List<Address>? = geocoder.getFromLocation(latitude, longitude, 1)
-            if (addresses != null && addresses.isNotEmpty()) {
-                val address = addresses[0]
-                val stringBuilder = StringBuilder()
-
-                for (i in 0..address.maxAddressLineIndex) stringBuilder.append(address.getAddressLine(i)).append("\n")
-
-                return stringBuilder.toString()
-            }
-        } catch (e: Exception) {
-            e.printStackTrace()
-        }
-
-        return null
-    }
-    private fun calculateDistance(
-        lat1: Double, lon1: Double,
-        lat2: Double, lon2: Double
-    ): Double {
-        val R = 6371 // Radius of the Earth in kilometers
-        val latDistance = Math.toRadians(lat2 - lat1)
-        val lonDistance = Math.toRadians(lon2 - lon1)
-        val a = (Math.sin(latDistance / 2) * Math.sin(latDistance / 2)
-                + (Math.cos(Math.toRadians(lat1)) * Math.cos(Math.toRadians(lat2))
-                * Math.sin(lonDistance / 2) * Math.sin(lonDistance / 2)))
-        val c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a))
-        return R * c // Distance in kilometers gotta change later
-    }
-    private fun requestLocation() {
-        if (ActivityCompat.checkSelfPermission(
-                requireContext(),
-                Manifest.permission.ACCESS_FINE_LOCATION
-            ) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
-                requireContext(),
-                Manifest.permission.ACCESS_COARSE_LOCATION
-            ) != PackageManager.PERMISSION_GRANTED
-        ) {
-            return
-        }
-        fusedLocationClient.lastLocation
-            .addOnSuccessListener { location ->
-                if (location != null) {
-                     currentLatitude = location.latitude
-                    currentLongitude = location.longitude
-                    //Toast.makeText(requireContext(),currentLatitude.toString(), Toast.LENGTH_LONG).show()
-                    //Toast.makeText(requireContext(),currentLongitude.toString(), Toast.LENGTH_LONG).show()
-                }
-            }
-            .addOnFailureListener { e ->
-                e.printStackTrace()
-            }
-    }
 
     fun round(number: Double, decimals: Int): Double {
         if (decimals < 0) throw IllegalArgumentException("no work")

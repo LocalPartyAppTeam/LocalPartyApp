@@ -1,12 +1,12 @@
 package com.example.partyapp
 
 import android.annotation.SuppressLint
-import android.app.DatePickerDialog
-import android.app.TimePickerDialog
 import android.content.ContentValues
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.location.Address
+import android.location.Geocoder
 import android.location.Location
 import android.location.LocationManager
 import android.os.Build
@@ -24,15 +24,12 @@ import android.widget.ImageView
 import android.widget.ScrollView
 import android.widget.TextView
 import android.widget.Toast
-import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.net.toUri
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.flexbox.FlexboxLayoutManager
@@ -143,6 +140,8 @@ class AddEstablishmentActivity : AppCompatActivity(), OnMapReadyCallback {
             val photoList = mutableListOf<String>()
             val tagsList = mutableListOf<String>()
             val sanTagsList = mutableListOf<String>()
+            val geoHelper = GeoHelper(this)
+            val address = geoHelper.getAddress(lat,long)
             for(entry in photosArray){
                 if(entry.image.toString() != "null") {
                     photoList.add(entry.image.toString())
@@ -156,7 +155,7 @@ class AddEstablishmentActivity : AppCompatActivity(), OnMapReadyCallback {
                 tagText = re.replace(tagText, "")
                 sanTagsList.add(tagText)
             }
-            val establishment = EstablishmentModel(auth.currentUser!!.uid, lat, long, name, desc,
+            val establishment = EstablishmentModel(auth.currentUser!!.uid, lat, long, name, desc, address,
                 photoList,
                 tagsList,
                 sanTagsList

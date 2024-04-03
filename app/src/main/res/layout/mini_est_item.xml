@@ -5,6 +5,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <com.google.android.material.card.MaterialCardView
+        android:id="@+id/mini_est_card"
         style="@style/RoundedCard"
         android:layout_width="180dp"
         android:layout_height="90dp"
