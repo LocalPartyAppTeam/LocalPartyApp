@@ -150,6 +150,7 @@ class LocalsFragment2 : Fragment() {
                             val endTime = eventEnd.toString().substringAfter('T')
                             val dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm")
                             val startDate = LocalDate.parse(eventStart, dateFormatter)
+                            val endDate = LocalDate.parse(eventEnd, dateFormatter)
                             val dayOfWeek = getDayOfWeek(startDate)
                             val dayOfMonth = getDayofMonth(startDate)
                             val address = getAddress(eventLat,eventLong)
@@ -182,7 +183,7 @@ class LocalsFragment2 : Fragment() {
                                     imagePaths.add(it)
                                 }
                             }
-                            val localItem = LocalItem(eventName.toString(), eventHost.toString(), address.toString(), startTime.toString() + "-" +  endTime.toString(), round(distance*0.621371,2).toString() + " mi", dayOfWeek, dayOfMonth,eventStart, eventDesc,imagePaths)
+                            val localItem = LocalItem(eventName.toString(), eventHost.toString(), address.toString(), startTime, endTime, round(distance*0.621371,2).toString() + " mi", dayOfWeek, dayOfMonth,eventStart, eventDesc,imagePaths)
                             localsList.add(localItem)
                         }
                     }

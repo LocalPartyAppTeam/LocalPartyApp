@@ -7,7 +7,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
-import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
 
 class LocalsAdapter(private val localsList: List<LocalItem>) :
@@ -33,7 +32,8 @@ class LocalsAdapter(private val localsList: List<LocalItem>) :
                     putExtra("eventName",currentItem.eventName)
                     putExtra("host",currentItem.host)
                     putExtra("address",currentItem.address)
-                    putExtra("time",currentItem.time)
+                    putExtra("startTime",currentItem.startTime)
+                    putExtra("endTime",currentItem.endTime)
                     putExtra("distance",currentItem.distance)
                     putExtra("dayOfWeek",currentItem.dayOfWeek)
                     putExtra("dayOfMonth",currentItem.dayOfMonth)

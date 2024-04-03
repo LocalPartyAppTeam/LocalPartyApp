@@ -2,7 +2,6 @@ package com.example.partyapp
 
 import android.os.Bundle
 import android.widget.TextView
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 
 class LocalsExtra : AppCompatActivity() {
@@ -12,7 +11,8 @@ class LocalsExtra : AppCompatActivity() {
         val eventName = intent.getStringExtra("eventName")
         val host = intent.getStringExtra("host")
         val address = intent.getStringExtra("address")
-        val time = intent.getStringExtra("time")
+        val startTime = intent.getStringExtra("startTime")
+        val endTime = intent.getStringExtra("endTime")
         val distance = intent.getStringExtra("distance")
         val dayOfWeek = intent.getStringExtra("dayOfWeek")
         val dayOfMonth = intent.getStringExtra("dayOfMonth")
@@ -21,7 +21,8 @@ class LocalsExtra : AppCompatActivity() {
         val eventNameTextView = findViewById<TextView>(R.id.eventNameTextView)
 //        val hostNameTextView = findViewById<TextView>(R.id.hostNameTextView)
         val addressTextView = findViewById<TextView>(R.id.addressTextView)
-        val timeTextView = findViewById<TextView>(R.id.timeTextView)
+        val startTimeTextView = findViewById<TextView>(R.id.startTimeTextView)
+        val endTimeTextView = findViewById<TextView>(R.id.endTimeTextView)
 //        val distanceTextView = findViewById<TextView>(R.id.distanceTextView)
 //        val dayOfWeekTextView = findViewById<TextView>(R.id.dayOfWeekTextView)
 //        val dayOfMonthTextView = findViewById<TextView>(R.id.dayOfMonthTextView)
@@ -29,7 +30,8 @@ class LocalsExtra : AppCompatActivity() {
         eventNameTextView.text = eventName
 //        hostNameTextView.text = host
         addressTextView.text = address
-        timeTextView.text = time
+        startTimeTextView.text = startTime
+        endTimeTextView.text = endTime
 //        distanceTextView.text = distance
 //        dayOfWeekTextView.text = dayOfWeek
 //        dayOfMonthTextView.text = dayOfMonth
