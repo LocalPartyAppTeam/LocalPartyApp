@@ -7,7 +7,8 @@ data class LocalItem(
     val eventName: String?,
     val host: String?,
     val address: String?,
-    val time: String?,
+    val startTime: String?,
+    val endTime: String?,
     val distance: String?,
     val dayOfWeek: String?,
     val dayOfMonth: String?,
@@ -25,6 +26,7 @@ data class LocalItem(
         parcel.readString(),
         parcel.readString(),
         parcel.readString(),
+        parcel.readString(),
         TODO("iP")
     ) {
     }
@@ -33,7 +35,8 @@ data class LocalItem(
         parcel.writeString(eventName)
         parcel.writeString(host)
         parcel.writeString(address)
-        parcel.writeString(time)
+        parcel.writeString(startTime)
+        parcel.writeString(endTime)
         parcel.writeString(distance)
         parcel.writeString(dayOfWeek)
         parcel.writeString(dayOfMonth)

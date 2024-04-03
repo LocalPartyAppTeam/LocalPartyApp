@@ -38,7 +38,9 @@ import java.time.format.TextStyle
 @RequiresApi(Build.VERSION_CODES.O)
 class LocalsFragment2 : Fragment() {
     private lateinit var recyclerView: RecyclerView
+    private lateinit var recyclerViewE: RecyclerView
     private lateinit var adapter: LocalsAdapter
+    private lateinit var adapterE: LocalEstablishmentAdapter
     private lateinit var eventsReference: DatabaseReference
     private lateinit var geocoder: Geocoder
     private lateinit var fusedLocationClient: FusedLocationProviderClient
@@ -63,7 +65,70 @@ class LocalsFragment2 : Fragment() {
         requestLocation()
         val view = inflater.inflate(R.layout.fragment_locals, container, false)
         recyclerView = view.findViewById(R.id.recycler_locals)
+        val navigationBarHeight = resources.getDimensionPixelSize(com.google.android.material.R.dimen.design_bottom_navigation_height)
+        recyclerView.setPadding(0, 0, 0, navigationBarHeight)
+        recyclerViewE = view.findViewById(R.id.recycler_establishments)
         recyclerView.layoutManager = LinearLayoutManager(requireContext())
+        recyclerViewE.layoutManager = LinearLayoutManager(requireContext(),LinearLayoutManager.HORIZONTAL,true)
+
+
+        /*
+        i have to add the data from the local establishments google firebase
+         */
+
+
+        val databaseReference = FirebaseDatabase.getInstance().getReference("Establishments")
+        databaseReference.addListenerForSingleValueEvent(object : ValueEventListener {
+            override fun onDataChange(dataSnapshot: DataSnapshot) {
+                val establishmentsList = mutableListOf<LocalEstablishment>()
+                for (uniqueIDSnapshot in dataSnapshot.children) {
+                    val uniqueID = uniqueIDSnapshot.key
+                    uniqueID?.let {
+                        for (establishmentSnapshot in uniqueIDSnapshot.children) {
+                            val establishmentName = establishmentSnapshot.key
+                            establishmentName?.let {
+                                val lat = establishmentSnapshot.child("lat").getValue(Double::class.java)
+                                val long = establishmentSnapshot.child("long").getValue(Double::class.java)
+                                val name = establishmentSnapshot.child("name").getValue(String::class.java)
+                                val desc = establishmentSnapshot.child("desc").getValue(String::class.java)
+                                val owner = establishmentSnapshot.child("ownerAccount").getValue(String::class.java)
+                                var distanceE = 0.0
+                                if(lat != null && long != null) distanceE = calculateDistance(currentLatitude, currentLongitude, lat, long)
+                                val establishmentAddress = getAddress(lat,long)
+                                val imgPathsSnapshot = establishmentSnapshot.child("imgPaths")
+                                val imagePaths = mutableListOf<String>()
+                                for (imageSnapshot in imgPathsSnapshot.children) {
+                                    val imagePath = imageSnapshot.getValue(String::class.java)
+                                    imagePath?.let {
+                                        imagePaths.add(it)
+                                    }
+                                }
+                                ///i need establishmentName, address, distance, description, ownerAccount,iP
+                                // Create Establishment object and add to the list
+                                val establishment = LocalEstablishment(name,establishmentAddress,distanceE.toString(),desc,owner,imagePaths)
+                                establishmentsList.add(establishment)
+
+                            }
+                        }
+                    }
+                }
+                adapterE = LocalEstablishmentAdapter(establishmentsList)
+                recyclerViewE.adapter = adapterE
+            }
+
+            override fun onCancelled(databaseError: DatabaseError) {
+                Toast.makeText(requireContext(),"error",Toast.LENGTH_LONG).show()
+            }
+        })
+
+
+
+
+
+
+        /*
+        the below is to add the information of for the local events firebase and adding to adapter
+         */
         ///random events will add from firebase later
         eventsReference = FirebaseDatabase.getInstance().getReference("Events")
         //Toast.makeText(requireContext(),"EventsReference path: ${eventsReference}",Toast.LENGTH_LONG).show()
@@ -85,6 +150,7 @@ class LocalsFragment2 : Fragment() {
                             val endTime = eventEnd.toString().substringAfter('T')
                             val dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm")
                             val startDate = LocalDate.parse(eventStart, dateFormatter)
+                            val endDate = LocalDate.parse(eventEnd, dateFormatter)
                             val dayOfWeek = getDayOfWeek(startDate)
                             val dayOfMonth = getDayofMonth(startDate)
                             val address = getAddress(eventLat,eventLong)
@@ -117,7 +183,7 @@ class LocalsFragment2 : Fragment() {
                                     imagePaths.add(it)
                                 }
                             }
-                            val localItem = LocalItem(eventName.toString(), eventHost.toString(), address.toString(), startTime.toString() + "-" +  endTime.toString(), round(distance*0.621371,2).toString() + " mi", dayOfWeek, dayOfMonth,eventStart, eventDesc,imagePaths)
+                            val localItem = LocalItem(eventName.toString(), eventHost.toString(), address.toString(), startTime, endTime, round(distance*0.621371,2).toString() + " mi", dayOfWeek, dayOfMonth,eventStart, eventDesc,imagePaths)
                             localsList.add(localItem)
                         }
                     }
@@ -181,7 +247,7 @@ class LocalsFragment2 : Fragment() {
                 + (Math.cos(Math.toRadians(lat1)) * Math.cos(Math.toRadians(lat2))
                 * Math.sin(lonDistance / 2) * Math.sin(lonDistance / 2)))
         val c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a))
-        return R * c // Distance in kilometers
+        return R * c // Distance in kilometers gotta change later
     }
     private fun requestLocation() {
         if (ActivityCompat.checkSelfPermission(
