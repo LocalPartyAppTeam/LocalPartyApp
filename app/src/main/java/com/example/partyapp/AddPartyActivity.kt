@@ -32,6 +32,7 @@ import androidx.core.app.ActivityCompat
 import androidx.core.net.toUri
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.google.android.flexbox.FlexboxLayoutManager
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationCallback
 import com.google.android.gms.location.LocationRequest
@@ -117,10 +118,11 @@ class AddPartyActivity : AppCompatActivity(), OnMapReadyCallback {
     private var eminute = 0
     private val blank = AddPictureRVEntryModel()
     private val photosArray: MutableList<AddPictureRVEntryModel> = mutableListOf<AddPictureRVEntryModel>(blank)
+    private val tagsArray: MutableList<TagModel> = mutableListOf<TagModel>()
     private val storageRef = FirebaseStorage.getInstance().reference.child("eventImages")
     private lateinit var photosAdapter: EntryPhotoAdapter
     private lateinit var mFusedLocationClient: FusedLocationProviderClient
-
+    private val geoHelper = GeoHelper(this)
     val pickPhotos = registerForActivityResult(ActivityResultContracts.PickMultipleVisualMedia(6)) { uris ->
         // Callback is invoked after the user selects a media item or closes the
         // photo picker.
@@ -155,17 +157,30 @@ class AddPartyActivity : AppCompatActivity(), OnMapReadyCallback {
     }
     @SuppressLint("ClickableViewAccessibility")
     override fun onCreate(savedInstanceState: Bundle?) {
+        val loc = geoHelper.requestLocation()
+        if(loc != null){
+            lat = loc[0]
+            long = loc[1]
+        }
         auth = Firebase.auth
         val database = Firebase.database
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_add_party)
         val photosRV = findViewById<RecyclerView>(R.id.photosRecyclerView)
         photosAdapter = EntryPhotoAdapter(this,photosArray)
-        photosRV.layoutManager = GridLayoutManager(this,3)
+        val layoutManager = GridLayoutManager(this,3)
+        photosRV.layoutManager = layoutManager
         photosRV.adapter = photosAdapter
 
+
+        val tagEntry = findViewById<EditText>(R.id.PartyTagEntry)
+        val addTagButton = findViewById<Button>(R.id.PartyAddTagButton)
+        val tagsRV = findViewById<RecyclerView>(R.id.partyTagsRecyclerView)
+        val tagsAdapter = TagsAdapter(true, tagsArray)
+        tagsRV.layoutManager = FlexboxLayoutManager(this)
+        tagsRV.adapter = tagsAdapter
+
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
-        getLastLocation()
         val mapF =findViewById<View>(R.id.mapOverlay)
         val mainScrollView = findViewById<ScrollView>(R.id.addPartyScrollView)
         val partyDescription = findViewById<EditText>(R.id.PartyDescEntry)
@@ -173,6 +188,13 @@ class AddPartyActivity : AppCompatActivity(), OnMapReadyCallback {
         val partyEnd = findViewById<TextView>(R.id.PartyEndText)
         val partyName = findViewById<TextView>(R.id.PartyNameEntry)
         val submitButton = findViewById<Button>(R.id.PartySubmitButton)
+        addTagButton.setOnClickListener{
+            if(tagEntry.text.toString() != ""){
+                val tag = TagModel(text = tagEntry.text.toString())
+                tagsArray.add(tag)
+                tagsAdapter.notifyItemInserted(tagsAdapter.itemCount-1)
+            }
+        }
         partyStart.setOnClickListener{
             openStartDateDialog(partyStart)
         }
@@ -180,20 +202,32 @@ class AddPartyActivity : AppCompatActivity(), OnMapReadyCallback {
             openEndDateDialog(partyEnd)
         }
         submitButton.setOnClickListener {
-            val myRef = database.getReference("Events")
+            val myRef = database.getReference("TaggedEvents")
             val start = LocalDateTime.of(syear,smonth+1,sday,shour,sminute).toString()
             val end = LocalDateTime.of(eyear,emonth+1,eday,ehour,eminute).toString()
             val name = partyName.text.toString()
             val desc = partyDescription.text.toString()
             val photoList = mutableListOf<String>()
+            val tagsList = mutableListOf<String>()
+            val sanTagsList = mutableListOf<String>()
+            val address = geoHelper.getAddress(lat,long)
             for(entry in photosArray){
                 if(entry.image.toString() != "null") {
                     photoList.add(entry.image.toString())
                 }
-
             }
-            val event = EventModel(auth.currentUser!!.uid, lat, long, start, end, name, desc,
-                photoList
+            for(entry in tagsArray){
+                var tagText = entry.text!!
+                tagsList.add(tagText)
+                tagText = tagText.lowercase()
+                val re = Regex("[^A-Za-z0-9 ]")
+                tagText = re.replace(tagText, "")
+                sanTagsList.add(tagText)
+            }
+            val event = EventModel(auth.currentUser!!.uid, lat, long, address, start, end, name, desc,
+                photoList,
+                tagsList,
+                sanTagsList
             )
             myRef.child(auth.currentUser!!.uid).child(name).setValue(event).addOnSuccessListener {
                 Log.d(ContentValues.TAG, ":D")
@@ -301,13 +335,12 @@ class AddPartyActivity : AppCompatActivity(), OnMapReadyCallback {
         // method to get the location
         getLastLocation()
         val location = LatLng(lat, long)
-        Log.i("testdata","lat: ${long}")
+        Log.i("testdata","long: ${long}")
         Log.i("testdata","lat: ${lat}")
         googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(location, 12F))
         googleMap.addMarker(
             MarkerOptions()
                 .position(location)
-                .title("Newark")
         )
         googleMap.setOnMapClickListener {
                 googleMap.clear()
@@ -319,8 +352,11 @@ class AddPartyActivity : AppCompatActivity(), OnMapReadyCallback {
                 googleMap.addMarker(
                     markerOptions
                 )
+                lat = it.latitude
+                long = it.longitude
         }
     }
+
     @SuppressLint("MissingPermission")
     private fun getLastLocation(){
         // check if permissions are given
@@ -396,7 +432,7 @@ class AddPartyActivity : AppCompatActivity(), OnMapReadyCallback {
             android.Manifest.permission.ACCESS_FINE_LOCATION
         ) == PackageManager.PERMISSION_GRANTED;
     }
-        private fun requestPermissions() {
+    private fun requestPermissions() {
         ActivityCompat.requestPermissions(
             this, arrayOf<String>(
                 android.Manifest.permission.ACCESS_COARSE_LOCATION,
@@ -429,14 +465,16 @@ class AddPartyActivity : AppCompatActivity(), OnMapReadyCallback {
             getLastLocation()
         }
     }
+
     inner class EntryPhotoAdapter
         (
         private val context: Context,
         private val entries: MutableList<AddPictureRVEntryModel>,
-    ): RecyclerView.Adapter<EntryPhotoAdapter.EntryViewHolder>() {
+    ): RecyclerView.Adapter<EntryPhotoAdapter.EntryViewHolder>()
+    {
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): EntryViewHolder {
             val view = LayoutInflater.from(parent.context)
-                .inflate(R.layout.rv_listing_image_item, parent, false)
+                .inflate(R.layout.add_image_item, parent, false)
             return EntryViewHolder(view)
         }
 
@@ -507,7 +545,7 @@ class AddPartyActivity : AppCompatActivity(), OnMapReadyCallback {
 
         inner class EntryViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView), View.OnClickListener {
             var item: AddPictureRVEntryModel? = null
-            val photo: ImageView = itemView.findViewById(R.id.photo)
+            val photo: ImageView = itemView.findViewById(R.id.addedPhoto)
             val plus: ImageView = itemView.findViewById(R.id.addPhotoIcon)
 
             init {

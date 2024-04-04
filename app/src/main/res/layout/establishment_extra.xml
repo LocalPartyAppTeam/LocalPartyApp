@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+<androidx.constraintlayout.widget.ConstraintLayout
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <ImageView
+        android:id="@+id/estExtraHeaderImage"
+        android:layout_width="match_parent"
+        android:layout_height="250dp"
+        android:scaleType="centerCrop"
+        android:src="@drawable/randomprofilepic2"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <!-- TextView for Establishment Name -->
+    <TextView
+        android:id="@+id/textView_establishmentName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/estExtraHeaderImage"
+        android:text="Establishment Name"
+        android:textSize="24sp"
+        android:textStyle="bold"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/estExtraHeaderImage" />
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/EstExtraTagsCard"
+        android:layout_width="390dp"
+        android:layout_height="wrap_content"
+        android:background="@drawable/rounded_card"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView_establishmentName"
+        android:layout_marginTop="5dp">
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="100dp">
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/estExtraTagsRV"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:listitem="@layout/tag_item"/>
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </com.google.android.material.card.MaterialCardView>
+
+    <!-- TextView for Description -->
+    <TextView
+        android:id="@+id/EstExtraDescription"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/textView_establishmentName"
+        android:layout_marginTop="15dp"
+        android:text="Description"
+        app:layout_constraintTop_toBottomOf="@+id/EstExtraTagsCard" />
+
+    <!-- Horizontal line -->
+    <View
+        android:id="@+id/line"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginTop="16dp"
+        app:layout_constraintTop_toBottomOf="@+id/EstExtraDescription"
+        android:background="@android:color/black" />
+
+    <!-- TextView for Address -->
+    <TextView
+        android:id="@+id/EstExtraAddress"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="15dp"
+        app:layout_constraintTop_toBottomOf="@+id/line"
+        android:text="Address" />
+
+    <!-- Address View (e.g., Google Maps view) -->
+    <com.google.android.gms.maps.MapView
+        android:id="@+id/EstExtraMapView"
+        android:layout_width="match_parent"
+        android:layout_height="200dp"
+        app:layout_constraintTop_toBottomOf="@+id/EstExtraAddress"
+        android:layout_marginTop="16dp" />
+    <!-- TextView for Pictures -->
+    <TextView
+        android:id="@+id/textView_pictures"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@+id/EstExtraMapView"
+        android:layout_marginTop="16dp"
+        android:text="Pictures" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:layout_width="375dp"
+        android:layout_height="250dp"
+        android:layout_marginTop="16dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView_pictures"
+        tools:listitem="@layout/listing_small_image_item"/>
+</androidx.constraintlayout.widget.ConstraintLayout>
+    <!-- ImageView at the top -->
+
+
+</ScrollView>
