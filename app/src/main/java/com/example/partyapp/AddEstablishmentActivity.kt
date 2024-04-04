@@ -5,8 +5,6 @@ import android.content.ContentValues
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
-import android.location.Address
-import android.location.Geocoder
 import android.location.Location
 import android.location.LocationManager
 import android.os.Build
@@ -336,7 +334,7 @@ class AddEstablishmentActivity : AppCompatActivity(), OnMapReadyCallback {
     ): RecyclerView.Adapter<EntryPhotoAdapter.EntryViewHolder>() {
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): EntryViewHolder {
             val view = LayoutInflater.from(parent.context)
-                .inflate(R.layout.rv_listing_image_item, parent, false)
+                .inflate(R.layout.add_image_item, parent, false)
             return EntryViewHolder(view)
         }
 
@@ -407,7 +405,7 @@ class AddEstablishmentActivity : AppCompatActivity(), OnMapReadyCallback {
 
         inner class EntryViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView), View.OnClickListener {
             var item: AddPictureRVEntryModel? = null
-            val photo: ImageView = itemView.findViewById(R.id.photo)
+            val photo: ImageView = itemView.findViewById(R.id.addedPhoto)
             val plus: ImageView = itemView.findViewById(R.id.addPhotoIcon)
 
             init {

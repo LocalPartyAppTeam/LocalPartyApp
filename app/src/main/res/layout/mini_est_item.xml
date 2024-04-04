@@ -6,7 +6,7 @@
 
     <com.google.android.material.card.MaterialCardView
         android:id="@+id/mini_est_card"
-        style="@style/RoundedCard"
+        style="@style/Rounded"
         android:layout_width="180dp"
         android:layout_height="90dp"
         app:layout_constraintBottom_toBottomOf="parent"

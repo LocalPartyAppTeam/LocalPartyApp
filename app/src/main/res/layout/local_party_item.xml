@@ -12,14 +12,13 @@
         android:id="@+id/LocalEventCardHeader"
         style="@style/EventCardHeader"
         android:layout_width="325dp"
-        android:layout_height="60dp"
+        android:layout_height="95dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent">
-
             <TextView
                 android:id="@+id/LECHTitle"
                 android:layout_width="225dp"
@@ -61,6 +60,14 @@
                 android:textSize="12dp"
                 app:layout_constraintStart_toEndOf="@+id/LECHHostStatic"
                 app:layout_constraintTop_toBottomOf="@+id/LECHTitle" />
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/eventItemTagsRV"
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:orientation="horizontal"
+                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                app:layout_constraintTop_toBottomOf="@id/LECH_host"
+                tools:listitem="@layout/tag_item" />
         </androidx.constraintlayout.widget.ConstraintLayout>
     </com.google.android.material.card.MaterialCardView>
 

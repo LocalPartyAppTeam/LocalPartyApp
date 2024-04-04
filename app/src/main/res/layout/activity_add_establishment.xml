@@ -141,7 +141,7 @@
           android:layout_marginTop="20dp"
           android:background="@drawable/rounded_text_entry"
           android:backgroundTint="#232323"
-          tools:listitem="@layout/rv_listing_image_item"/>
+          tools:listitem="@layout/add_image_item"/>
       <TextView
           android:id="@+id/EstTagsTextStatic"
           android:layout_width="65dp"

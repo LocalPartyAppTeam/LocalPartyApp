@@ -1,6 +1,4 @@
 package com.example.partyapp
-import android.Manifest
-import android.content.pm.PackageManager
 import android.location.Geocoder
 import android.os.Build
 import android.os.Bundle
@@ -9,10 +7,12 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
 import android.widget.EditText
+import android.widget.ImageButton
+import android.widget.TextView
 import android.widget.Toast
 import androidx.annotation.RequiresApi
-import androidx.core.app.ActivityCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.gms.location.FusedLocationProviderClient
@@ -24,6 +24,7 @@ import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
 import java.util.Locale
 import com.google.android.gms.location.LocationServices
+import com.google.android.material.card.MaterialCardView
 import kotlin.math.pow
 
 //import com.google.firebase.database.core.view.View
@@ -36,9 +37,14 @@ class LocalsFragment2 : Fragment() {
     private lateinit var recyclerView: RecyclerView
     private lateinit var recyclerViewE: RecyclerView
     private lateinit var adapter: LocalsAdapter
+    private lateinit var staticTagsAdapter: TagsAdapter
+    private lateinit var filterTagsAdapter: TagsAdapter
     private lateinit var adapterE: LocalEstablishmentAdapter
     private lateinit var eventsReference: DatabaseReference
+    private lateinit var estReference: DatabaseReference
     private lateinit var geocoder: Geocoder
+    private lateinit var staticTagsRV: RecyclerView
+    private lateinit var filterTagsRV: RecyclerView
     private lateinit var fusedLocationClient: FusedLocationProviderClient
     private lateinit var searchbar : EditText
 
@@ -57,20 +63,158 @@ class LocalsFragment2 : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+        estReference = FirebaseDatabase.getInstance().getReference("TaggedEstablishments")
+        eventsReference = FirebaseDatabase.getInstance().getReference("TaggedEvents")
 
         val geoHelper = GeoHelper(requireContext())
         val loc = geoHelper.requestLocation()
+        val establishmentsList = mutableListOf<EstablishmentModel>()
+        val localsList = mutableListOf<EventModel>()
+        val searchTagStaticList = mutableListOf<TagModel>()
+        val searchTagFilterList = mutableListOf<TagModel>()
+        val searchTagFilterListStrings = mutableListOf<String>()
         if(loc != null){
             currentLatitude = loc[0]
             currentLongitude = loc[1]
         }
         val view = inflater.inflate(R.layout.fragment_locals, container, false)
+
         recyclerView = view.findViewById(R.id.recycler_locals)
-        val navigationBarHeight = resources.getDimensionPixelSize(com.google.android.material.R.dimen.design_bottom_navigation_height)
-        recyclerView.setPadding(0, 0, 0, navigationBarHeight)
         recyclerViewE = view.findViewById(R.id.recycler_establishments)
-        recyclerView.layoutManager = LinearLayoutManager(requireContext())
-        recyclerViewE.layoutManager = LinearLayoutManager(requireContext(),LinearLayoutManager.HORIZONTAL,true)
+        staticTagsRV = view.findViewById(R.id.tag_list_static_rv)
+        filterTagsRV = view.findViewById(R.id.tagFilterTagsRecyclerView)
+
+        staticTagsRV.layoutManager = LinearLayoutManager(requireContext(), RecyclerView.HORIZONTAL, false)
+        filterTagsRV.layoutManager = LinearLayoutManager(requireContext(), RecyclerView.HORIZONTAL, false)
+        recyclerView.layoutManager = LinearLayoutManager(requireContext(),LinearLayoutManager.HORIZONTAL,false)
+        recyclerViewE.layoutManager = LinearLayoutManager(requireContext(),LinearLayoutManager.HORIZONTAL,false)
+
+        staticTagsAdapter = TagsAdapter(false,searchTagStaticList)
+        filterTagsAdapter = TagsAdapter(true,searchTagFilterList)
+        adapter = LocalsAdapter(requireContext(),arrayOf(currentLatitude,currentLongitude), geoHelper, localsList)
+        adapterE = LocalEstablishmentAdapter(requireContext(),arrayOf(currentLatitude, currentLongitude), geoHelper, establishmentsList)
+
+        staticTagsRV.adapter = staticTagsAdapter
+        filterTagsRV.adapter = filterTagsAdapter
+        recyclerView.adapter = adapter
+        recyclerViewE.adapter = adapterE
+
+        val changeTagFiltersTV:TextView = view.findViewById(R.id.tag_list_static_text)
+        val filterCardMask:TextView = view.findViewById(R.id.tagCardMask)
+        val filterCard:MaterialCardView = view.findViewById(R.id.tag_filter_card)
+        val filterCardBackButton: ImageButton = view.findViewById(R.id.filterCardBackButton)
+        val filterCardAddTagButton: Button = view.findViewById(R.id.tagFilterAddTagButton)
+        val filterCardSubmitButton: Button = view.findViewById(R.id.tagFilterSubmitButton)
+        val filterCardTagEntry: EditText = view.findViewById(R.id.tagFilterTagEntry)
+        changeTagFiltersTV.setOnClickListener{
+            searchTagFilterList.clear()
+            searchTagFilterList.addAll(searchTagStaticList)
+            filterTagsAdapter.notifyDataSetChanged()
+            filterCardMask.visibility = View.VISIBLE
+            filterCard.visibility = View.VISIBLE
+        }
+        filterCardMask.setOnClickListener {
+        }
+        filterCardBackButton.setOnClickListener{
+            filterCardMask.visibility = View.GONE
+            filterCard.visibility = View.GONE
+            searchTagFilterList.clear()
+            searchTagFilterListStrings.clear()
+            filterTagsAdapter.notifyDataSetChanged()
+        }
+        filterCardAddTagButton.setOnClickListener{
+
+            val tagS = filterCardTagEntry.text.toString()
+            if(tagS != ""){
+                val tag = TagModel(text = tagS)
+                searchTagFilterList.add(tag)
+                searchTagFilterListStrings.add(Regex("[^A-Za-z0-9 ]").
+                replace(tagS.lowercase(), ""))
+                filterTagsAdapter.notifyItemInserted(filterTagsAdapter.itemCount-1)
+            }
+        }
+        filterCardSubmitButton.setOnClickListener{
+            searchTagStaticList.clear()
+            searchTagStaticList.addAll(searchTagFilterList)
+            staticTagsAdapter.notifyDataSetChanged()
+            establishmentsList.clear()
+            localsList.clear()
+            adapterE.notifyDataSetChanged()
+            adapter.notifyDataSetChanged()
+            val filterListSize = searchTagFilterListStrings.size
+            estReference.addListenerForSingleValueEvent(object : ValueEventListener {
+                override fun onDataChange(dataSnapshot: DataSnapshot) {
+                    for (uniqueIDSnapshot in dataSnapshot.children) {
+                        val uniqueID = uniqueIDSnapshot.key
+                        uniqueID?.let {
+                            if(filterListSize > 0) {
+                                for (establishmentSnapshot in uniqueIDSnapshot.children) {
+                                    val establishmentName = establishmentSnapshot.key
+                                    establishmentName?.let {
+                                        val establishment =
+                                            establishmentSnapshot.getValue(EstablishmentModel::class.java)
+                                        if (establishment != null && !establishment.sanitizedTags.isNullOrEmpty()) {
+                                            val tagCheck = searchTagFilterListStrings.toSet()
+                                                .subtract(establishment.sanitizedTags!!.toSet())
+                                            if (tagCheck.isEmpty()) {
+                                                establishmentsList.add(establishment)
+                                                adapterE.notifyItemInserted(adapterE.itemCount - 1)
+                                            }
+                                        }
+                                    }
+                                }
+                            }else{
+                                for (establishmentSnapshot in uniqueIDSnapshot.children) {
+                                    val establishmentName = establishmentSnapshot.key
+                                    establishmentName?.let {
+                                        val establishment = establishmentSnapshot.getValue(EstablishmentModel::class.java)
+                                        establishmentsList.add(establishment!!)
+                                        adapterE.notifyItemInserted(adapterE.itemCount-1)
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+                override fun onCancelled(databaseError: DatabaseError) {
+                    Toast.makeText(requireContext(),"error",Toast.LENGTH_LONG).show()
+                }
+            })
+            eventsReference.addListenerForSingleValueEvent(object : ValueEventListener {
+                override fun onDataChange(dataSnapshot: DataSnapshot) {
+                    for (userSnapshot in dataSnapshot.children){
+                        val userId = userSnapshot.key ///the host
+                        userId?.let {
+                            if(filterListSize > 0) {
+                                for (eventSnapshot in userSnapshot.children) {
+                                    val localEvent = eventSnapshot.getValue(EventModel::class.java)
+                                    if (localEvent != null && !localEvent.sanitizedTags.isNullOrEmpty()) {
+                                        val tagCheck = searchTagFilterListStrings.toSet().subtract(
+                                            localEvent.sanitizedTags!!.toSet()
+                                        )
+                                        if (tagCheck.isEmpty()) {
+                                            localsList.add(localEvent)
+                                            adapter.notifyItemInserted(adapter.itemCount - 1)
+                                        }
+                                    }
+                                }
+                            }else{
+                                for (eventSnapshot in userSnapshot.children) {
+                                    val localEvent = eventSnapshot.getValue(EventModel::class.java)!!
+                                    localsList.add(localEvent)
+                                }
+                            }
+                        }
+                    }
+                    localsList.sortBy { geoHelper.calculateDistance(it.lat!!,it.long!!,currentLatitude,currentLongitude) }
+                    adapter.notifyDataSetChanged()
+                }
+                override fun onCancelled(databaseError: DatabaseError) {
+                    Toast.makeText(requireContext(),"error fetching", Toast.LENGTH_LONG).show()
+                }
+            })
+        }
+
 
 
         /*
@@ -78,97 +222,34 @@ class LocalsFragment2 : Fragment() {
          */
 
 
-        val databaseReference = FirebaseDatabase.getInstance().getReference("TaggedEstablishments")
-        databaseReference.addListenerForSingleValueEvent(object : ValueEventListener {
+        estReference.addListenerForSingleValueEvent(object : ValueEventListener {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
-                val establishmentsList = mutableListOf<EstablishmentModel>()
                 for (uniqueIDSnapshot in dataSnapshot.children) {
                     val uniqueID = uniqueIDSnapshot.key
                     uniqueID?.let {
                         for (establishmentSnapshot in uniqueIDSnapshot.children) {
                             val establishmentName = establishmentSnapshot.key
                             establishmentName?.let {
-                                val lat = establishmentSnapshot.child("lat").getValue(Double::class.java)
-                                val long = establishmentSnapshot.child("long").getValue(Double::class.java)
-                                val name = establishmentSnapshot.child("name").getValue(String::class.java)
-                                val desc = establishmentSnapshot.child("desc").getValue(String::class.java)
-                                val owner = establishmentSnapshot.child("ownerAccount").getValue(String::class.java)
-                                val estAddress = geoHelper.getAddress(lat,long)
-                                val imgPathsSnapshot = establishmentSnapshot.child("imgPaths")
-                                val imagePaths = mutableListOf<String>()
-                                for (imageSnapshot in imgPathsSnapshot.children) {
-                                    val imagePath = imageSnapshot.getValue(String::class.java)
-                                    imagePath?.let {
-                                        imagePaths.add(it)
-                                    }
-                                }
-                                val tagsSnapshot = establishmentSnapshot.child("tags")
-                                val tags = mutableListOf<String>()
-                                for (tagSnapshot in tagsSnapshot.children) {
-                                    val tag = tagSnapshot.getValue(String::class.java)
-                                    tag?.let {
-                                        tags.add(it)
-                                    }
-                                }
-                                val sanTagsSnapshot = establishmentSnapshot.child("sanitizedTags")
-                                val sanTags = mutableListOf<String>()
-                                for (sanTagSnapshot in sanTagsSnapshot.children) {
-                                    val sanTag = sanTagSnapshot.getValue(String::class.java)
-                                    sanTag?.let {
-                                        sanTags.add(it)
-                                    }
-                                }
-                                ///i need establishmentName, address, distance, description, ownerAccount,iP
-                                // Create Establishment object and add to the list
-                                val establishment = EstablishmentModel(owner,lat,long,name,desc,estAddress,imagePaths,tags,sanTags)
-                                establishmentsList.add(establishment)
-
+                                val establishment = establishmentSnapshot.getValue(EstablishmentModel::class.java)
+                                establishmentsList.add(establishment!!)
+                                adapterE.notifyItemInserted(adapterE.itemCount-1)
                             }
                         }
                     }
                 }
-                adapterE = LocalEstablishmentAdapter(arrayOf(currentLatitude, currentLongitude), geoHelper, establishmentsList)
-                recyclerViewE.adapter = adapterE
             }
-
             override fun onCancelled(databaseError: DatabaseError) {
                 Toast.makeText(requireContext(),"error",Toast.LENGTH_LONG).show()
             }
         })
-
-
-
-
-
-
-        /*
-        the below is to add the information of for the local events firebase and adding to adapter
-         */
-        ///random events will add from firebase later
-        eventsReference = FirebaseDatabase.getInstance().getReference("TaggedEvents")
-        //Toast.makeText(requireContext(),"EventsReference path: ${eventsReference}",Toast.LENGTH_LONG).show()
         eventsReference.addListenerForSingleValueEvent(object : ValueEventListener {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
-                val localsList = mutableListOf<EventModel>()
                 for (userSnapshot in dataSnapshot.children){
                     val userId = userSnapshot.key ///the host
                     userId?.let {
                         for (eventSnapshot in userSnapshot.children) {
-                            val eventName = eventSnapshot.child("name").getValue(String::class.java)
-                            val eventDesc = eventSnapshot.child("desc").getValue(String::class.java) //i need this
-                            val eventHost = eventSnapshot.child("host").getValue(String::class.java)
                             val eventLat = eventSnapshot.child("lat").getValue(Double::class.java)
                             val eventLong = eventSnapshot.child("long").getValue(Double::class.java)
-                            val eventStart = eventSnapshot.child("start").getValue(String::class.java)
-                            val eventEnd = eventSnapshot.child("end").getValue(String::class.java)
-                            val startTime = eventStart.toString().substringAfter('T')
-                            val endTime = eventEnd.toString().substringAfter('T')
-                            val dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm")
-                            val startDate = LocalDate.parse(eventStart, dateFormatter)
-                            val endDate = LocalDate.parse(eventEnd, dateFormatter)
-                            val dayOfWeek = getDayOfWeek(startDate)
-                            val dayOfMonth = getDayofMonth(startDate)
-                            val address = geoHelper.getAddress(eventLat,eventLong)
                             var distance = 0.0
 
                             if(eventLat != null && eventLong != null) distance = geoHelper.calculateDistance(currentLatitude, currentLongitude, eventLat, eventLong)
@@ -190,62 +271,19 @@ class LocalsFragment2 : Fragment() {
                             /*
                             i need the imgPaths now
                              */
-                            val imgPathsSnapshot = eventSnapshot.child("imgPaths")
-                            val imagePaths = mutableListOf<String>()
-                            for (imageSnapshot in imgPathsSnapshot.children) {
-                                val imagePath = imageSnapshot.getValue(String::class.java)
-                                imagePath?.let {
-                                    imagePaths.add(it)
-                                }
-                            }
-                            val tagsSnapshot = eventSnapshot.child("tags")
-                            val tags = mutableListOf<String>()
-                            for (tagSnapshot in tagsSnapshot.children) {
-                                val tag = tagSnapshot.getValue(String::class.java)
-                                tag?.let {
-                                    tags.add(it)
-                                    Log.i("TagsLF2","tag $it")
-                                }
-                            }
-
-                            val sanTagsSnapshot = eventSnapshot.child("sanitizedTags")
-                            val sanTags = mutableListOf<String>()
-                            for (sanTagSnapshot in sanTagsSnapshot.children) {
-                                val sanTag = sanTagSnapshot.getValue(String::class.java)
-                                sanTag?.let {
-                                    sanTags.add(it)
-                                    Log.i("TagsLF2","santag $it")
-                                }
-                            }
-
-                            Log.i("TagsLF2","tags array size ${tags!!.size}")
-                            val localEvent = EventModel(eventHost.toString(), eventLat, eventLong,
-                                address.toString(), eventStart, eventEnd, eventName.toString(),
-                                eventDesc, imagePaths, tags, sanTags)
-                            Log.i("TagsLF2","tags array size after insert ${localEvent.tags!!.size}")
+                            val localEvent = eventSnapshot.getValue(EventModel::class.java)!!
                             localsList.add(localEvent)
                         }
                     }
                 }
-//                localsList.add(LocalItem("Event 1", "Host 1", "Address 1", "Time 1", "Date 1", "Mon","20"))
-//                localsList.sortBy { it.distance?.toDouble() }
 
                 localsList.sortBy { geoHelper.calculateDistance(it.lat!!,it.long!!,currentLatitude,currentLongitude) }
-                adapter = LocalsAdapter(arrayOf(currentLatitude,currentLongitude), geoHelper, localsList)
-                recyclerView.adapter = adapter
+                adapter.notifyDataSetChanged()
             }
-
             override fun onCancelled(databaseError: DatabaseError) {
                 Toast.makeText(requireContext(),"error fetching", Toast.LENGTH_LONG).show()
             }
         })
-
-
-//        val localsList = mutableListOf<LocalItem>()
-//        localsList.add(LocalItem("Event 1", "Host 1", "Address 1", "Time 1", "Date 1", "Mon","20"))
-//        localsList.add(LocalItem("Event 2", "Host 2", "Address 2", "Time 2", "Date 2","Mon","20"))
-//        adapter = LocalsAdapter(localsList)
-//        recyclerView.adapter = adapter
         return view
 
     }

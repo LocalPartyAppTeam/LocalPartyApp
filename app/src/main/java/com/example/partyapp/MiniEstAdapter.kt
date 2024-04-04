@@ -9,7 +9,7 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.card.MaterialCardView
 
-class miniEstAdapter(private val miniEstArray: MutableList<EstablishmentModel>, private val context: Context): RecyclerView.Adapter<miniEstAdapter.ViewHolder>() {
+class MiniEstAdapter(private val miniEstArray: MutableList<EstablishmentModel>, private val context: Context): RecyclerView.Adapter<MiniEstAdapter.ViewHolder>() {
 
     class ViewHolder(itemView: View): RecyclerView.ViewHolder(itemView){
         val nameTextView: TextView
@@ -17,19 +17,19 @@ class miniEstAdapter(private val miniEstArray: MutableList<EstablishmentModel>, 
         val descTextView: TextView
         val miniEstCard: MaterialCardView
         init {
-            nameTextView = itemView.findViewById(R.id.tagText)
+            nameTextView = itemView.findViewById(R.id.miniEstCardName)
             locationTextView = itemView.findViewById(R.id.miniEstCardDist)
             descTextView = itemView.findViewById(R.id.miniEstCardDesc)
             miniEstCard = itemView.findViewById(R.id.mini_est_card)
         }
     }
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): miniEstAdapter.ViewHolder {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MiniEstAdapter.ViewHolder {
         val context = parent.context
         val inflater = LayoutInflater.from(context)
         val view = LayoutInflater.from(parent.context).inflate(R.layout.mini_est_item, parent, false)
         return ViewHolder(view)
     }
-    override fun onBindViewHolder(holder: miniEstAdapter.ViewHolder, position: Int) {
+    override fun onBindViewHolder(holder: MiniEstAdapter.ViewHolder, position: Int) {
         val miniEst = miniEstArray[position]
         holder.nameTextView.text = miniEst.name
         holder.locationTextView.text = miniEst.name
@@ -50,6 +50,6 @@ class miniEstAdapter(private val miniEstArray: MutableList<EstablishmentModel>, 
 
     }
     override fun getItemCount(): Int {
-        TODO("Not yet implemented")
+        return miniEstArray.size
     }
 }

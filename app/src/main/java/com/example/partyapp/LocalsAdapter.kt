@@ -2,6 +2,7 @@ package com.example.partyapp
 
 // LocalsAdapter.kt
 
+import android.content.Context
 import android.content.Intent
 import android.os.Build
 import android.util.Log
@@ -10,11 +11,12 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.annotation.RequiresApi
+import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import java.time.LocalDateTime
 
 @RequiresApi(Build.VERSION_CODES.O)
-class LocalsAdapter(private val userLocation: Array<Double>,private val geo: GeoHelper, private val localsList: List<EventModel>) :
+class LocalsAdapter(private val context: Context, private val userLocation: Array<Double>, private val geo: GeoHelper, private val localsList: List<EventModel>) :
     RecyclerView.Adapter<LocalsAdapter.LocalViewHolder>() {
 
     inner class LocalViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
@@ -27,6 +29,7 @@ class LocalsAdapter(private val userLocation: Array<Double>,private val geo: Geo
         val eventTitle: TextView = itemView.findViewById(R.id.LECHTitle)
         val eventNumberPhotos:TextView = itemView.findViewById(R.id.LECIPhotoCount)
         val eventAddressDistance : TextView = itemView.findViewById(R.id.text_event_address_distance)
+        val eventTagsRV : RecyclerView = itemView.findViewById(R.id.eventItemTagsRV)
         init {
             itemView.setOnClickListener {
                 val context = itemView.context
@@ -40,6 +43,8 @@ class LocalsAdapter(private val userLocation: Array<Double>,private val geo: Geo
                     putExtra("start",currentItem.start)
                     putExtra("end",currentItem.end)
                     putExtra("distance",geo.calculateDistance(userLocation[0], userLocation[1], currentItem.lat!!,currentItem.long!!).toString())
+                    putExtra("lat",currentItem.lat)
+                    putExtra("long",currentItem.long)
                     putExtra("dayOfWeek", LocalDateTime.parse(currentItem.start).dayOfWeek)
                     putExtra("dayOfMonth",LocalDateTime.parse(currentItem.start).dayOfMonth)
                     /*
@@ -50,7 +55,6 @@ class LocalsAdapter(private val userLocation: Array<Double>,private val geo: Geo
                     putExtra("tags", (currentItem.tags)?.toTypedArray())
                     putExtra("sanitizedTags", (currentItem.sanitizedTags)?.toTypedArray())
                     putExtra("imgPaths", (currentItem.imgPaths)?.toTypedArray())
-                    Log.i("TagsAdapter","tags ${currentItem.tags!!.size}")
 
                 }
                 context.startActivity(intent)
@@ -68,8 +72,17 @@ class LocalsAdapter(private val userLocation: Array<Double>,private val geo: Geo
 
     override fun onBindViewHolder(holder: LocalViewHolder, position: Int) {
         val currentItem = localsList[position]
+        val eventTagsList:MutableList<TagModel> = mutableListOf<TagModel>()
+        holder.eventTagsRV.layoutManager = LinearLayoutManager(context, RecyclerView.HORIZONTAL, false)
+        val eventTagsAdapter = TagsAdapter(false,eventTagsList)
+        holder.eventTagsRV.adapter = eventTagsAdapter
         holder.eventNameHost.text =  currentItem.host//currentItem.eventName + " (" + currentItem.distance + ")" // + " hosted by " + currentItem.host
-
+        if(currentItem.tags != null){
+            for(tag in currentItem.tags!!){
+                eventTagsList.add(TagModel(text=tag))
+                eventTagsAdapter.notifyItemInserted(eventTagsAdapter.itemCount)
+            }
+        }
 //        holder.eventTime.text = currentItem.time
 //        holder.eventAddressDistance.text = currentItem.address//  + " (" + currentItem.distance + ")"
         holder.eventAddressDistance.text = geo.calculateDistance(userLocation[0], userLocation[1], currentItem.lat!!,currentItem.long!!).toString()//  + " (" + currentItem.distance + ")"

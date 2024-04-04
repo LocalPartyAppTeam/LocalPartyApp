@@ -12,7 +12,7 @@
         android:id="@+id/LocalEventCardHeader"
         style="@style/EventCardHeader"
         android:layout_width="325dp"
-        android:layout_height="60dp"
+        android:layout_height="75dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
@@ -42,6 +42,15 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/estItemTagsRV"
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:orientation="horizontal"
+                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                app:layout_constraintTop_toBottomOf="@id/LECHTitle"
+                tools:listitem="@layout/tag_item" />
+
 
         </androidx.constraintlayout.widget.ConstraintLayout>
     </com.google.android.material.card.MaterialCardView>
@@ -50,7 +59,7 @@
         android:id="@+id/LocalEventCardInfo"
         style="@style/EventCardInfo"
         android:layout_width="325dp"
-        android:layout_height="200dp"
+        android:layout_height="150dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/LocalEventCardHeader">

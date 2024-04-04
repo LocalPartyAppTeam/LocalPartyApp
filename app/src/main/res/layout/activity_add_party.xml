@@ -198,7 +198,7 @@
                 android:layout_marginTop="20dp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                tools:listitem="@layout/rv_listing_image_item"/>
+                tools:listitem="@layout/add_image_item"/>
             <TextView
                 android:id="@+id/PartyTagsTextStatic"
                 android:layout_width="65dp"

@@ -474,7 +474,7 @@ class AddPartyActivity : AppCompatActivity(), OnMapReadyCallback {
     {
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): EntryViewHolder {
             val view = LayoutInflater.from(parent.context)
-                .inflate(R.layout.rv_listing_image_item, parent, false)
+                .inflate(R.layout.add_image_item, parent, false)
             return EntryViewHolder(view)
         }
 
@@ -545,7 +545,7 @@ class AddPartyActivity : AppCompatActivity(), OnMapReadyCallback {
 
         inner class EntryViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView), View.OnClickListener {
             var item: AddPictureRVEntryModel? = null
-            val photo: ImageView = itemView.findViewById(R.id.photo)
+            val photo: ImageView = itemView.findViewById(R.id.addedPhoto)
             val plus: ImageView = itemView.findViewById(R.id.addPhotoIcon)
 
             init {

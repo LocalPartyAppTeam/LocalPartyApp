@@ -130,15 +130,14 @@
         android:layout_marginTop="5dp">
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="150dp">
+            android:layout_height="100dp">
 
             <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/localEventTags"
+                android:id="@+id/localEventTagsRV"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="Event Description"
                 android:textSize="16dp"
-                app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
