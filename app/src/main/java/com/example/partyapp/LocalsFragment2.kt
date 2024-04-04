@@ -25,6 +25,9 @@ import com.google.firebase.database.ValueEventListener
 import java.util.Locale
 import com.google.android.gms.location.LocationServices
 import com.google.android.material.card.MaterialCardView
+import com.google.firebase.Firebase
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.auth
 import kotlin.math.pow
 
 //import com.google.firebase.database.core.view.View
@@ -47,6 +50,7 @@ class LocalsFragment2 : Fragment() {
     private lateinit var filterTagsRV: RecyclerView
     private lateinit var fusedLocationClient: FusedLocationProviderClient
     private lateinit var searchbar : EditText
+    private lateinit var auth: FirebaseAuth
 
 
     private var currentLatitude: Double = 0.0
@@ -63,6 +67,7 @@ class LocalsFragment2 : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+        auth = Firebase.auth
         estReference = FirebaseDatabase.getInstance().getReference("TaggedEstablishments")
         eventsReference = FirebaseDatabase.getInstance().getReference("TaggedEvents")
 
@@ -253,24 +258,6 @@ class LocalsFragment2 : Fragment() {
                             var distance = 0.0
 
                             if(eventLat != null && eventLong != null) distance = geoHelper.calculateDistance(currentLatitude, currentLongitude, eventLat, eventLong)
-//                            Toast.makeText(requireContext(),dayOfWeek.toString(),Toast.LENGTH_SHORT).show()
-                            /* structure of card item
-                            val eventName: String,
-                                val host: String,
-                                val address: String,
-                                val time: String,
-                                val distance: String,
-                                val dayOfWeek: String,
-                                val dayOfMonth: String
-                             */
-                            /*
-                            firebase structure
-                            desc,end,host,imgPaths,lat,long,name,start
-                            format: 2024-04-21T10:30
-                             */
-                            /*
-                            i need the imgPaths now
-                             */
                             val localEvent = eventSnapshot.getValue(EventModel::class.java)!!
                             localsList.add(localEvent)
                         }

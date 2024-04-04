@@ -31,9 +31,15 @@ class MiniEstAdapter(private val miniEstArray: MutableList<EstablishmentModel>, 
     }
     override fun onBindViewHolder(holder: MiniEstAdapter.ViewHolder, position: Int) {
         val miniEst = miniEstArray[position]
+        val geo = GeoHelper(context)
+        var loc = arrayOf(0.0,0.0)
+        val l = geo.requestLocation()
+        if(l != null){
+            loc = l
+        }
         holder.nameTextView.text = miniEst.name
-        holder.locationTextView.text = miniEst.name
-        holder.descTextView.text = miniEst.name
+        holder.locationTextView.text = geo.calculateDistance(loc[0],loc[1],miniEst.lat!!,miniEst.long!!).toString() + "mi"
+        holder.descTextView.text = miniEst.desc
         holder.miniEstCard.setOnClickListener{
             val intent = Intent(context,EstablishmentExtra::class.java).apply {
                 putExtra("name",miniEst.name)
