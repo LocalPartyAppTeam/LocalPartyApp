@@ -61,7 +61,7 @@ class LocalsExtra : AppCompatActivity() {
 
 
         val nearbyRV = findViewById<RecyclerView>(R.id.nearbyEstablishmentRV)
-        val miniEstAdapter = MiniEstAdapter(nearbyMiniList, this)
+        val miniEstAdapter = MiniEstAdapter(nearbyMiniList, this, arrayOf<Double>(lat,long))
         nearbyRV.layoutManager = LinearLayoutManager(this, RecyclerView.HORIZONTAL,false)
         nearbyRV.adapter = miniEstAdapter
 

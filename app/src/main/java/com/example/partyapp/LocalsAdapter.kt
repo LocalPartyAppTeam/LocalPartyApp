@@ -85,7 +85,7 @@ class LocalsAdapter(private val context: Context, private val userLocation: Arra
         }
 //        holder.eventTime.text = currentItem.time
 //        holder.eventAddressDistance.text = currentItem.address//  + " (" + currentItem.distance + ")"
-        holder.eventAddressDistance.text = geo.calculateDistance(userLocation[0], userLocation[1], currentItem.lat!!,currentItem.long!!).toString()//  + " (" + currentItem.distance + ")"
+        holder.eventAddressDistance.text = geo.calculateDistance(userLocation[0], userLocation[1], currentItem.lat!!,currentItem.long!!).toString()+" mi"//  + " (" + currentItem.distance + ")"
         holder.eventTitle.text = currentItem.name
         holder.eventNumberPhotos.text = (currentItem.imgPaths?.size.toString() + " PHOTO(S)")
 //        holder.dayOfWeek.text = currentItem.dayOfWeek
