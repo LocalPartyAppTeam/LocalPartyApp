@@ -37,6 +37,7 @@ class LocalsAdapter(private val context: Context, private val userLocation: Arra
 
 //                Toast.makeText(context, "Hello World", Toast.LENGTH_LONG).show()
                 val intent = Intent(context,LocalsExtra::class.java).apply {
+                    putExtra("event",currentItem)
                     putExtra("name",currentItem.name)
                     putExtra("host",currentItem.host)
                     putExtra("address",currentItem.address)

@@ -4,6 +4,7 @@ import android.os.Parcel
 import android.os.Parcelable
 
 data class EventModel(
+    var pushId: String?= null,
     var host: String?= null,
     var lat: Double?= null,
     var long: Double?= null,
@@ -17,6 +18,7 @@ data class EventModel(
     var sanitizedTags: MutableList<String>?= null
 ): Parcelable {
     constructor(parcel: Parcel) : this(
+        parcel.readString(),
         parcel.readString(),
         parcel.readDouble(),
         parcel.readDouble(),
@@ -32,6 +34,7 @@ data class EventModel(
     }
 
     override fun writeToParcel(parcel: Parcel, flags: Int) {
+        parcel.writeString(pushId)
         parcel.writeString(host)
         parcel.writeDouble(lat!!)
         parcel.writeDouble(long!!)

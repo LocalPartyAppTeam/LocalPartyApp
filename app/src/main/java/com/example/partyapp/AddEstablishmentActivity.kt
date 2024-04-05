@@ -152,12 +152,13 @@ class AddEstablishmentActivity : AppCompatActivity(), OnMapReadyCallback {
                 tagText = re.replace(tagText, "")
                 sanTagsList.add(tagText)
             }
-            val establishment = EstablishmentModel(auth.currentUser!!.uid, lat, long, name, desc, address,
+            val pushRef = myRef.child(auth.currentUser!!.uid).push()
+            val establishment = EstablishmentModel(pushRef.key, auth.currentUser!!.uid, lat, long, name, desc, address,
                 photoList,
                 tagsList,
                 sanTagsList
             )
-            myRef.child(auth.currentUser!!.uid).child(name).setValue(establishment).addOnSuccessListener {
+            pushRef.setValue(establishment).addOnSuccessListener {
                 Log.d(ContentValues.TAG, ":D")
             }
             auth.currentUser?.let {
@@ -216,6 +217,8 @@ class AddEstablishmentActivity : AppCompatActivity(), OnMapReadyCallback {
             googleMap.addMarker(
                 markerOptions
             )
+            lat = it.latitude
+            long = it.longitude
         }
     }
     @SuppressLint("MissingPermission")
@@ -312,20 +315,7 @@ class AddEstablishmentActivity : AppCompatActivity(), OnMapReadyCallback {
         return locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER) || locationManager.isProviderEnabled(
             LocationManager.NETWORK_PROVIDER
         )
-    }/*
-    @Override
-    override fun onRequestPermissionsResult(
-        requestCode: Int,
-        permissions: Array<String?>,
-        grantResults: IntArray
-    ) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        if (requestCode == PERMISSION_ID) {
-            if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                getLastLocation()
-            }
-        }
-    }*/
+    }
     override fun onResume() {
         super.onResume()
         if (checkPermissions()) {
