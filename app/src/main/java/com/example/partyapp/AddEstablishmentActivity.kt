@@ -125,7 +125,6 @@ class AddEstablishmentActivity : AppCompatActivity(), OnMapReadyCallback {
             }
         }
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
-        getLastLocation()
         val mapF =findViewById<View>(R.id.mapOverlay)
         val mainScrollView = findViewById<ScrollView>(R.id.addEstablishmentScrollView)
         val establishmentDescription = findViewById<EditText>(R.id.EstablishmentDescEntry)
@@ -197,7 +196,7 @@ class AddEstablishmentActivity : AppCompatActivity(), OnMapReadyCallback {
     override fun onMapReady(googleMap: GoogleMap) {
 
         // method to get the location
-        getLastLocation()
+        getLastLocation(googleMap)
         val location = LatLng(lat, long)
         Log.i("testdata","lat: ${long}")
         Log.i("testdata","lat: ${lat}")
@@ -220,7 +219,7 @@ class AddEstablishmentActivity : AppCompatActivity(), OnMapReadyCallback {
         }
     }
     @SuppressLint("MissingPermission")
-    private fun getLastLocation(){
+    private fun getLastLocation(googleMap: GoogleMap){
         // check if permissions are given
         if (checkPermissions()) {
 
@@ -236,8 +235,14 @@ class AddEstablishmentActivity : AppCompatActivity(), OnMapReadyCallback {
                     if (location == null) {
                         requestNewLocationData()
                     } else {
-                        lat = location.getLatitude()
-                        long = location.getLongitude()
+                        googleMap.clear()
+                        val loca =  LatLng(location.getLatitude(), location.getLongitude())
+                        googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(loca, 12F))
+                        googleMap.addMarker(
+                            MarkerOptions()
+                                .position(loca)
+                                .title("Newark")
+                        )
                     }
                 })
             } else {
@@ -251,7 +256,7 @@ class AddEstablishmentActivity : AppCompatActivity(), OnMapReadyCallback {
             // request for permissions
             requestPermissions()
             if(checkPermissions()){
-                getLastLocation()
+                getLastLocation(googleMap)
             }
         }
     }
@@ -324,7 +329,6 @@ class AddEstablishmentActivity : AppCompatActivity(), OnMapReadyCallback {
     override fun onResume() {
         super.onResume()
         if (checkPermissions()) {
-            getLastLocation()
         }
     }
     inner class EntryPhotoAdapter

@@ -56,6 +56,7 @@ private lateinit var auth: FirebaseAuth
 const val IMAGE_REQUEST_CODE = 100
 @RequiresApi(Build.VERSION_CODES.P)
 class AddPartyActivity : AppCompatActivity(), OnMapReadyCallback {
+    private val geoHelper = GeoHelper(this)
     private var lat = 40.7357
     private var long = -74.172363
     private val MAPVIEW_BUNDLE_KEY = "MapViewBundleKey"
@@ -122,7 +123,6 @@ class AddPartyActivity : AppCompatActivity(), OnMapReadyCallback {
     private val storageRef = FirebaseStorage.getInstance().reference.child("eventImages")
     private lateinit var photosAdapter: EntryPhotoAdapter
     private lateinit var mFusedLocationClient: FusedLocationProviderClient
-    private val geoHelper = GeoHelper(this)
     val pickPhotos = registerForActivityResult(ActivityResultContracts.PickMultipleVisualMedia(6)) { uris ->
         // Callback is invoked after the user selects a media item or closes the
         // photo picker.
@@ -331,12 +331,16 @@ class AddPartyActivity : AppCompatActivity(), OnMapReadyCallback {
     }
 
     override fun onMapReady(googleMap: GoogleMap) {
+        val loc = geoHelper.requestLocation()
+        Log.i("testdata","loc: ${loc}")
+        if(loc != null){
+            lat = loc[0]
+            long = loc[1]
+        }
 
-        // method to get the location
-        getLastLocation()
+        // method to get the locationn
+        getLastLocation(googleMap)
         val location = LatLng(lat, long)
-        Log.i("testdata","long: ${long}")
-        Log.i("testdata","lat: ${lat}")
         googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(location, 12F))
         googleMap.addMarker(
             MarkerOptions()
@@ -354,11 +358,13 @@ class AddPartyActivity : AppCompatActivity(), OnMapReadyCallback {
                 )
                 lat = it.latitude
                 long = it.longitude
+                Log.i("testdata","long: ${long}")
+                Log.i("testdata","lat: ${lat}")
         }
     }
 
     @SuppressLint("MissingPermission")
-    private fun getLastLocation(){
+    private fun getLastLocation(googleMap: GoogleMap){
         // check if permissions are given
         if (checkPermissions()) {
 
@@ -374,8 +380,14 @@ class AddPartyActivity : AppCompatActivity(), OnMapReadyCallback {
                     if (location == null) {
                         requestNewLocationData()
                     } else {
-                        lat = location.getLatitude()
-                        long = location.getLongitude()
+                        googleMap.clear()
+                        val loca =  LatLng(location.getLatitude(), location.getLongitude())
+                        googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(loca, 12F))
+                        googleMap.addMarker(
+                            MarkerOptions()
+                                .position(loca)
+                                .title("Newark")
+                        )
                     }
                 })
             } else {
@@ -389,7 +401,7 @@ class AddPartyActivity : AppCompatActivity(), OnMapReadyCallback {
             // request for permissions
             requestPermissions()
             if(checkPermissions()){
-                getLastLocation()
+                getLastLocation(googleMap)
             }
         }
     }
@@ -462,7 +474,6 @@ class AddPartyActivity : AppCompatActivity(), OnMapReadyCallback {
     override fun onResume() {
         super.onResume()
         if (checkPermissions()) {
-            getLastLocation()
         }
     }
 

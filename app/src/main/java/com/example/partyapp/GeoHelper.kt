@@ -9,9 +9,12 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContentProviderCompat.requireContext
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
+import java.math.RoundingMode
 import java.util.Locale
 import kotlin.math.atan2
 import kotlin.math.cos
+import kotlin.math.round
+import kotlin.math.roundToInt
 import kotlin.math.sin
 import kotlin.math.sqrt
 
@@ -48,7 +51,7 @@ class GeoHelper(private val context: Context) {
                 + (cos(Math.toRadians(lat1)) * cos(Math.toRadians(lat2))
                 * sin(lonDistance / 2) * sin(lonDistance / 2)))
         val c = 2 * atan2(sqrt(a), sqrt(1 - a))
-        return R * c // Distance in kilometers gotta change later
+        return  (R*c*0.621371).toBigDecimal().setScale(1, RoundingMode.HALF_UP).toDouble()// Distance in kilometers gotta change later
     }
 
     fun requestLocation(): Array<Double>? {

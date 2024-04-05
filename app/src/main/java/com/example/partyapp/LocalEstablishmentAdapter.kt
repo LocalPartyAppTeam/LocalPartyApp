@@ -31,7 +31,7 @@ class LocalEstablishmentAdapter(private val context: Context, private val userLo
             }
         }
         holder.titleTextView.text = establishment.name
-        holder.distanceTextView.text = geo.calculateDistance(userLocation[0], userLocation[1], establishment.lat!!,establishment.long!!).toString()
+        holder.distanceTextView.text = geo.calculateDistance(userLocation[0], userLocation[1], establishment.lat!!,establishment.long!!).toString()+" mi"
         holder.descriptionTextView.text = establishment.desc
     }
 

@@ -9,7 +9,7 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.card.MaterialCardView
 
-class MiniEstAdapter(private val miniEstArray: MutableList<EstablishmentModel>, private val context: Context): RecyclerView.Adapter<MiniEstAdapter.ViewHolder>() {
+class MiniEstAdapter(private val miniEstArray: MutableList<EstablishmentModel>, private val context: Context, private val location: Array<Double>): RecyclerView.Adapter<MiniEstAdapter.ViewHolder>() {
 
     class ViewHolder(itemView: View): RecyclerView.ViewHolder(itemView){
         val nameTextView: TextView
@@ -31,9 +31,10 @@ class MiniEstAdapter(private val miniEstArray: MutableList<EstablishmentModel>, 
     }
     override fun onBindViewHolder(holder: MiniEstAdapter.ViewHolder, position: Int) {
         val miniEst = miniEstArray[position]
+        val geo = GeoHelper(context)
         holder.nameTextView.text = miniEst.name
-        holder.locationTextView.text = miniEst.name
-        holder.descTextView.text = miniEst.name
+        holder.locationTextView.text = geo.calculateDistance(location[0],location[1],miniEst.lat!!,miniEst.long!!).toString() + " mi"
+        holder.descTextView.text = miniEst.desc
         holder.miniEstCard.setOnClickListener{
             val intent = Intent(context,EstablishmentExtra::class.java).apply {
                 putExtra("name",miniEst.name)
