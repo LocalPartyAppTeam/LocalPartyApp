@@ -90,7 +90,10 @@ class LoginActivity : AppCompatActivity() {
     }
 
     private fun updateUI() {
-        startActivity(Intent(this, MainActivity::class.java))
+        val intent = Intent(this, MainActivity::class.java)
+        intent.putExtra("finish", true)
+        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP) // To clean up all activities
+        startActivity(intent)
         Toast.makeText(
             this,
             "Authentication Success.",
