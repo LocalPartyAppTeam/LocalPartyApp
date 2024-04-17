@@ -224,12 +224,13 @@ class AddPartyActivity : AppCompatActivity(), OnMapReadyCallback {
                 tagText = re.replace(tagText, "")
                 sanTagsList.add(tagText)
             }
-            val event = EventModel(auth.currentUser!!.uid, lat, long, address, start, end, name, desc,
+            val pushRef = myRef.child(auth.currentUser!!.uid).push()
+            val event = EventModel(pushRef.key, auth.currentUser!!.uid, lat, long, address, start, end, name, desc,
                 photoList,
                 tagsList,
                 sanTagsList
             )
-            myRef.child(auth.currentUser!!.uid).child(name).setValue(event).addOnSuccessListener {
+            pushRef.setValue(event).addOnSuccessListener {
                 Log.d(ContentValues.TAG, ":D")
             }
             auth.currentUser?.let {
@@ -457,20 +458,7 @@ class AddPartyActivity : AppCompatActivity(), OnMapReadyCallback {
         return locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER) || locationManager.isProviderEnabled(
             LocationManager.NETWORK_PROVIDER
         )
-    }/*
-    @Override
-    override fun onRequestPermissionsResult(
-        requestCode: Int,
-        permissions: Array<String?>,
-        grantResults: IntArray
-    ) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        if (requestCode == PERMISSION_ID) {
-            if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                getLastLocation()
-            }
-        }
-    }*/
+    }
     override fun onResume() {
         super.onResume()
         if (checkPermissions()) {

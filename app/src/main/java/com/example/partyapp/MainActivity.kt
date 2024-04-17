@@ -28,36 +28,41 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
 
         auth = Firebase.auth
-        if (auth.currentUser == null) {
-            this.findViewById<BottomNavigationView?>(R.id.bottom_navigation).visibility = View.GONE
-            val bottomNavigationBar: BottomNavigationView = findViewById(R.id.bottom_navigation_logged_out)
-            bottomNavigationBar.setOnItemSelectedListener { item ->
-                lateinit var fragment: Fragment
-                when (item.itemId) {
-                    R.id.eventsBN -> fragment = MyEventsFragment()
-                    R.id.localsBN -> fragment = LocalsFragment2()
-                    R.id.profileBN -> fragment = LoginFragment()
-                }
-                replaceFragment(fragment)
-                true
-            }
-        }
 
-        if (auth.currentUser != null) {
-            this.findViewById<BottomNavigationView?>(R.id.bottom_navigation_logged_out).visibility = View.GONE
-            val bottomNavigationBar:BottomNavigationView = findViewById(R.id.bottom_navigation)
-            bottomNavigationBar.visibility = View.VISIBLE
-            bottomNavigationBar.setOnItemSelectedListener { item ->
-                lateinit var fragment: Fragment
-                when (item.itemId) {
-                    R.id.invitationsBN -> fragment = InvitationsFragment()
-                    R.id.eventsBN -> fragment = MyEventsFragment()
-                    R.id.localsBN -> fragment = LocalsFragment2()
-                    R.id.profileBN -> fragment = ProfileFragment()
+        when (auth.currentUser) {
+            null -> {
+                this.findViewById<BottomNavigationView?>(R.id.bottom_navigation).visibility =
+                    View.GONE
+                val bottomNavigationBar: BottomNavigationView =
+                    findViewById(R.id.bottom_navigation_logged_out)
+                bottomNavigationBar.setOnItemSelectedListener { item ->
+                    lateinit var fragment: Fragment
+                    when (item.itemId) {
+                        R.id.eventsBN -> fragment = LoginFragment()
+                        R.id.localsBN -> fragment = LoginFragment()
+                        R.id.profileBN -> fragment = LoginFragment()
+                    }
+                    replaceFragment(fragment)
+                    true
                 }
-                replaceFragment(fragment)
-                true
+            }
+            else -> {
+                this.findViewById<BottomNavigationView?>(R.id.bottom_navigation_logged_out).visibility = View.GONE
+                val bottomNavigationBar:BottomNavigationView = findViewById(R.id.bottom_navigation)
+                bottomNavigationBar.visibility = View.VISIBLE
+                bottomNavigationBar.setOnItemSelectedListener { item ->
+                    lateinit var fragment: Fragment
+                    when (item.itemId) {
+                        R.id.invitationsBN -> fragment = InvitationsFragment()
+                        R.id.eventsBN -> fragment = MyEventsFragment()
+                        R.id.localsBN -> fragment = LocalsFragment2()
+                        R.id.profileBN -> fragment = ProfileFragment()
+                    }
+                    replaceFragment(fragment)
+                    true
+                }
             }
         }
+        replaceFragment(ProfileFragment())
     }
 }

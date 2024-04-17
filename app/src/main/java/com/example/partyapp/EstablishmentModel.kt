@@ -4,6 +4,7 @@ import android.os.Parcel
 import android.os.Parcelable
 
 data class EstablishmentModel(
+    var pushId: String?= null,
     var ownerAccount: String?= null,
     var lat: Double?= 0.0,
     var long: Double?= 0.0,
@@ -15,6 +16,7 @@ data class EstablishmentModel(
     var sanitizedTags: MutableList<String>?= null
 ): Parcelable {
     constructor(parcel: Parcel) : this(
+        parcel.readString(),
         parcel.readString(),
         parcel.readDouble(),
         parcel.readDouble(),
@@ -28,6 +30,7 @@ data class EstablishmentModel(
     }
 
     override fun writeToParcel(parcel: Parcel, flags: Int) {
+        parcel.writeString(pushId)
         parcel.writeString(ownerAccount)
         parcel.writeDouble(lat!!)
         parcel.writeDouble(long!!)

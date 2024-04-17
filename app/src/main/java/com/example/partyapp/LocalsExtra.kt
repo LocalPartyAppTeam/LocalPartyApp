@@ -2,23 +2,30 @@ package com.example.partyapp
 
 import android.os.Bundle
 import android.util.Log
+import android.widget.Button
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.flexbox.FlexboxLayoutManager
+import com.google.firebase.Firebase
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.auth
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
 
 class LocalsExtra : AppCompatActivity() {
+private lateinit var auth: FirebaseAuth
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.locals_extra)
+        auth = Firebase.auth
         val eventName = intent.getStringExtra("name")
         val host = intent.getStringExtra("host")
+        val event = intent.getParcelableExtra<EventModel>("event")
         val address = intent.getStringExtra("address")
         val start = intent.getStringExtra("start")
         val end = intent.getStringExtra("end")
@@ -44,6 +51,15 @@ class LocalsExtra : AppCompatActivity() {
 //        val dayOfWeekTextView = findViewById<TextView>(R.id.dayOfWeekTextView)
 //        val dayOfMonthTextView = findViewById<TextView>(R.id.dayOfMonthTextView)
         val descriptionTextView = findViewById<TextView>(R.id.descriptionTextView)
+        val joinButton = findViewById<Button>(R.id.join_event)
+        joinButton.setOnClickListener {
+            event?.pushId?.let { it1 ->
+                FirebaseDatabase.getInstance().getReference("UsersAttending")
+                    .child(auth.currentUser!!.uid).child(
+                    it1
+                )
+            }?.setValue(event)
+        }
         eventNameTextView.text = eventName
 //        hostNameTextView.text = host
         addressTextView.text = address
@@ -77,6 +93,7 @@ class LocalsExtra : AppCompatActivity() {
                                 val lat = establishmentSnapshot.child("lat").getValue(Double::class.java)
                                 val long = establishmentSnapshot.child("long").getValue(Double::class.java)
                                 val name = establishmentSnapshot.child("name").getValue(String::class.java)
+                                val push = establishmentSnapshot.child("pushId").getValue(String::class.java)
                                 val desc = establishmentSnapshot.child("desc").getValue(String::class.java)
                                 val owner = establishmentSnapshot.child("ownerAccount").getValue(String::class.java)
                                 val estAddress = geoHelper.getAddress(lat,long)
@@ -106,7 +123,7 @@ class LocalsExtra : AppCompatActivity() {
                                 }
                                 ///i need establishmentName, address, distance, description, ownerAccount,iP
                                 // Create Establishment object and add to the list
-                                val establishment = EstablishmentModel(owner,lat,long,name,desc,estAddress,imagePaths,tags,sanTags)
+                                val establishment = EstablishmentModel(push,owner,lat,long,name,desc,estAddress,imagePaths,tags,sanTags)
                                 nearbyMiniList.add(establishment)
 
                             }
