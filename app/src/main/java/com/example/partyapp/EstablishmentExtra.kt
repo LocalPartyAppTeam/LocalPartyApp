@@ -11,17 +11,24 @@ import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.MapView
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
+import com.google.android.gms.maps.SupportMapFragment
+import com.google.android.gms.location.FusedLocationProviderClient
+import com.google.android.gms.location.LocationCallback
+import com.google.android.gms.location.LocationRequest
+import com.google.android.gms.location.LocationResult
+import com.google.android.gms.location.LocationServices
+import com.google.android.gms.maps.OnMapReadyCallback
 
-class EstablishmentExtra : AppCompatActivity() {
-    private lateinit var mapView: MapView
+class EstablishmentExtra : AppCompatActivity(), OnMapReadyCallback {
     private var lat: Double = 0.0
     private var long: Double = 0.0
+    private var establishmentName: String = ""
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.establishment_extra)
 
-        val establishmentName = intent.getStringExtra("name")
+        establishmentName = intent.getStringExtra("name").toString()
         val owner = intent.getStringExtra("owner")
         val address = intent.getStringExtra("address")
         val description = intent.getStringExtra("desc")
@@ -35,9 +42,9 @@ class EstablishmentExtra : AppCompatActivity() {
             Log.i("Tags","$tag")
         }
 
-        mapView = findViewById(R.id.EstExtraMapView)
-        mapView.onCreate(savedInstanceState)
-        mapView.getMapAsync(this)
+        val mapFragment = supportFragmentManager
+            .findFragmentById(R.id.mapFragment) as SupportMapFragment
+        mapFragment.getMapAsync(this)
 
         val establishmentNameTextView = findViewById<TextView>(R.id.textView_establishmentName)
 //        val ownerTextView = findViewById<TextView>(R.id.textView_owner)
@@ -58,38 +65,12 @@ class EstablishmentExtra : AppCompatActivity() {
 
 
     }
-    fun onMapReady(googleMap: GoogleMap) {
+    override fun onMapReady(googleMap: GoogleMap) {
         // Add a marker for the establishment and move the camera
-
-
-
-        val establishmentLocation = LatLng(75.00, 75.00)
-        googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(establishmentLocation, 15f))
-        googleMap.addMarker(MarkerOptions().position(establishmentLocation).title("Establishment Name"))
-    }
-
-    override fun onResume() {
-        super.onResume()
-        mapView.onResume()
-    }
-
-    override fun onPause() {
-        super.onPause()
-        mapView.onPause()
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        mapView.onDestroy()
-    }
-
-    override fun onLowMemory() {
-        super.onLowMemory()
-        mapView.onLowMemory()
+        val localLocation = LatLng(lat, long)
+        googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(localLocation, 15f))
+        googleMap.addMarker(MarkerOptions().position(localLocation).title(establishmentName))
     }
 
 }
 
-private fun MapView.getMapAsync(establishmentExtra: EstablishmentExtra) {
-
-}

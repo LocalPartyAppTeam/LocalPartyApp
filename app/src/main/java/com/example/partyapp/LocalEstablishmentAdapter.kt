@@ -53,6 +53,8 @@ class LocalEstablishmentAdapter(private val context: Context, private val userLo
                     putExtra("name",currentItem.name)
                     putExtra("owner",currentItem.ownerAccount)
                     putExtra("address",currentItem.address)
+                    putExtra("lat",currentItem.lat)
+                    putExtra("long",currentItem.long)
                     putExtra("desc",currentItem.desc)
                     putExtra("tags", (currentItem.tags)?.toTypedArray())
                     putExtra("sanitizedTags", (currentItem.sanitizedTags)?.toTypedArray())

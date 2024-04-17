@@ -82,18 +82,35 @@
         android:text="Address" />
 
     <!-- Address View (e.g., Google Maps view) -->
-    <com.google.android.gms.maps.MapView
-        android:id="@+id/EstExtraMapView"
-        android:layout_width="match_parent"
-        android:layout_height="200dp"
-        app:layout_constraintTop_toBottomOf="@+id/EstExtraAddress"
-        android:layout_marginTop="16dp" />
+    <androidx.cardview.widget.CardView
+        android:id="@+id/mapViewContainer"
+        android:layout_width="375dp"
+        android:layout_height="375dp"
+        android:background="@drawable/rounded_text_entry"
+        app:layout_constraintTop_toBottomOf="@id/EstExtraAddress"
+        android:layout_marginTop="15dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:cardCornerRadius="15dp">
+
+        <fragment xmlns:android="http://schemas.android.com/apk/res/android"
+            xmlns:map="http://schemas.android.com/apk/res-auto"
+            android:name="com.google.android.gms.maps.SupportMapFragment"
+            android:id="@+id/mapFragment"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"/>
+        <View
+            android:id="@+id/localsExtraMapOverlay"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"/>
+
+    </androidx.cardview.widget.CardView>
     <!-- TextView for Pictures -->
     <TextView
         android:id="@+id/textView_pictures"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:layout_constraintTop_toBottomOf="@+id/EstExtraMapView"
+        app:layout_constraintTop_toBottomOf="@+id/mapViewContainer"
         android:layout_marginTop="16dp"
         android:text="Pictures" />
 
