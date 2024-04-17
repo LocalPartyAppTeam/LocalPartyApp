@@ -119,6 +119,7 @@ class MyEventsFragment : Fragment() {
                     val uniqueID = uniqueIDSnapshot.key
                     uniqueID?.let {
                             val event = uniqueIDSnapshot.getValue(EventModel::class.java)
+                            Log.i("CHECK","${event?.tags?.size}")
                             ownEventList.add(event!!)
                             ownEventsAdapter.notifyItemInserted(ownEventsAdapter.itemCount - 1)
                     }

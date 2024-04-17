@@ -24,10 +24,12 @@ class OwnerEventExtraActivity : AppCompatActivity() {
         val desc = event!!.desc
         val lat = event!!.lat
         val long = event!!.long
-        val imagePathsArray = event!!.imgPaths
-        val tags = event!!.tags
-        val sanTags = event!!.sanitizedTags
+        val imagePathsArray = intent.getStringArrayExtra("imgPaths")?.toList() ?: emptyList()
+        val tags = intent.getStringArrayExtra("tags")?.toList() ?: emptyList()
+        val sanTags = intent.getStringArrayExtra("sanTags")?.toList() ?: emptyList()
         val tagModelList = mutableListOf<TagModel>()
+        Log.i("CHECK2","${event?.tags?.size}")
+        Log.i("CHECK2","${tags?.size}")
         if (tags != null) {
             for(tag in tags){
                 tagModelList.add(TagModel(text=tag))
