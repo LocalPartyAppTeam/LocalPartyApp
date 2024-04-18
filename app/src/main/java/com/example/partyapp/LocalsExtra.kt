@@ -117,41 +117,8 @@ class LocalsExtra : AppCompatActivity(), OnMapReadyCallback {
                         for (establishmentSnapshot in uniqueIDSnapshot.children) {
                             val establishmentName = establishmentSnapshot.key
                             establishmentName?.let {
-                                val lat = establishmentSnapshot.child("lat").getValue(Double::class.java)
-                                val long = establishmentSnapshot.child("long").getValue(Double::class.java)
-                                val name = establishmentSnapshot.child("name").getValue(String::class.java)
-                                val push = establishmentSnapshot.child("pushId").getValue(String::class.java)
-                                val desc = establishmentSnapshot.child("desc").getValue(String::class.java)
-                                val owner = establishmentSnapshot.child("ownerAccount").getValue(String::class.java)
-                                val estAddress = geoHelper.getAddress(lat,long)
-                                val imgPathsSnapshot = establishmentSnapshot.child("imgPaths")
-                                val imagePaths = mutableListOf<String>()
-                                for (imageSnapshot in imgPathsSnapshot.children) {
-                                    val imagePath = imageSnapshot.getValue(String::class.java)
-                                    imagePath?.let {
-                                        imagePaths.add(it)
-                                    }
-                                }
-                                val tagsSnapshot = establishmentSnapshot.child("tags")
-                                val tags = mutableListOf<String>()
-                                for (tagSnapshot in tagsSnapshot.children) {
-                                    val tag = tagSnapshot.getValue(String::class.java)
-                                    tag?.let {
-                                        tags.add(it)
-                                    }
-                                }
-                                val sanTagsSnapshot = establishmentSnapshot.child("sanitizedTags")
-                                val sanTags = mutableListOf<String>()
-                                for (sanTagSnapshot in sanTagsSnapshot.children) {
-                                    val sanTag = sanTagSnapshot.getValue(String::class.java)
-                                    sanTag?.let {
-                                        sanTags.add(it)
-                                    }
-                                }
-                                ///i need establishmentName, address, distance, description, ownerAccount,iP
-                                // Create Establishment object and add to the list
-                                val establishment = EstablishmentModel(push,owner,lat,long,name,desc,estAddress,imagePaths,tags,sanTags)
-                                nearbyMiniList.add(establishment)
+                                val establishmentM = establishmentSnapshot.getValue(EstablishmentModel::class.java)!!
+                                nearbyMiniList.add(establishmentM)
 
                             }
                         }
