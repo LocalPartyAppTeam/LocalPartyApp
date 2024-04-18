@@ -17,6 +17,9 @@
         android:theme="@style/Base.Theme.PartyApp"
         tools:targetApi="31">
         <activity
+            android:name=".SeeAttendeesActivity"
+            android:exported="false" />
+        <activity
             android:name=".OwnerEventExtraActivity"
             android:exported="false"
             android:label="@string/title_activity_owner_event_extra"
