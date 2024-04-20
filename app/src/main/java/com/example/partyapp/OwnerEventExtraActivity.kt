@@ -1,40 +1,45 @@
 package com.example.partyapp
 
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.widget.Button
+import android.widget.ImageView
 import android.widget.TextView
-import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
+import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.google.android.flexbox.FlexboxLayoutManager
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.ktx.Firebase
+import com.google.firebase.storage.FirebaseStorage
 
 class OwnerEventExtraActivity : AppCompatActivity() {
+    private lateinit var auth: FirebaseAuth
     override fun onCreate(savedInstanceState: Bundle?) {
+        auth = Firebase.auth
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_owner_event_extra)
         val event = intent.getParcelableExtra<EventModel>("event")
         val eventName = event!!.name
-        val host = event!!.host
-        val address = event!!.address
-        val start = event!!.start
-        val end = event!!.end
-        val desc = event!!.desc
-        val lat = event!!.lat
-        val long = event!!.long
-        val imagePathsArray = intent.getStringArrayExtra("imgPaths")?.toList() ?: emptyList()
-        val tags = intent.getStringArrayExtra("tags")?.toList() ?: emptyList()
-        val sanTags = intent.getStringArrayExtra("sanTags")?.toList() ?: emptyList()
+        val host = event.host
+        val address = event.address
+        val start = event.start
+        val end = event.end
+        val desc = event.desc
+        val lat = event.lat
+        val long = event.long
+        val imagePathsArray = event.imgPaths ?: emptyList<String>()
+        val tags = event.tags ?: emptyList<String>()
+        val sanTags = event.sanitizedTags ?: emptyList<String>()
         val tagModelList = mutableListOf<TagModel>()
-        Log.i("CHECK2","${event?.tags?.size}")
-        Log.i("CHECK2","${tags?.size}")
-        if (tags != null) {
-            for(tag in tags){
-                tagModelList.add(TagModel(text=tag))
-                Log.i("Tags","$tag")
-            }
+        Log.i("CHECK2","${event.tags?.size}")
+        Log.i("CHECK2","${tags.size}")
+        for(tag in tags){
+            tagModelList.add(TagModel(text=tag))
+            Log.i("Tags","$tag")
         }
         val geoHelper = GeoHelper(this)
         val eventNameTextView = findViewById<TextView>(R.id.owner_eventNameTextView)
@@ -53,11 +58,35 @@ class OwnerEventExtraActivity : AppCompatActivity() {
         val editEventButton = findViewById<Button>(R.id.owner_edit_event)
         val cancelEventButton = findViewById<Button>(R.id.owner_cancel_event)
 
+        whosGoingButton.setOnClickListener {
+            val intent = Intent(this,SeeAttendeesActivity::class.java).apply {
+                putExtra("pushId",event.pushId)
+                putExtra("owner", event.host == auth.currentUser!!.uid)
+            }
+            this.startActivity(intent)
+        }
+
+
         eventNameTextView.text = eventName
         addressTextView.text = address
         startTimeTextView.text = start
         endTimeTextView.text = end
         descriptionTextView.text = desc
+        val headerImage = findViewById<ImageView>(R.id.headerImage)
+
+        var storageRef = FirebaseStorage.getInstance().reference.child("eventImages")
+        if(imagePathsArray.isNotEmpty()){
+            Glide.with(headerImage)
+                .load(storageRef.child(imagePathsArray[0]) )
+                .diskCacheStrategy(DiskCacheStrategy.NONE)
+                .skipMemoryCache(true)
+                .centerCrop()
+                .error(R.drawable.baseline_pictures_24)
+                .into(headerImage)
+        }
+
+
+
 
 
 

@@ -50,15 +50,7 @@ class LocalEstablishmentAdapter(private val context: Context, private val userLo
                 val context = itemView.context
                 val currentItem = establishmentList[adapterPosition]
                 val intent = Intent(context,EstablishmentExtra::class.java).apply {
-                    putExtra("name",currentItem.name)
-                    putExtra("owner",currentItem.ownerAccount)
-                    putExtra("address",currentItem.address)
-                    putExtra("lat",currentItem.lat)
-                    putExtra("long",currentItem.long)
-                    putExtra("desc",currentItem.desc)
-                    putExtra("tags", (currentItem.tags)?.toTypedArray())
-                    putExtra("sanitizedTags", (currentItem.sanitizedTags)?.toTypedArray())
-                    putExtra("imgPaths", (currentItem.imgPaths)?.toTypedArray())
+                    putExtra("establishment",currentItem)
                     putExtra("distance",geo.calculateDistance(userLocation[0], userLocation[1], currentItem.lat!!,currentItem.long!!).toString())
                 }
                 context.startActivity(intent)

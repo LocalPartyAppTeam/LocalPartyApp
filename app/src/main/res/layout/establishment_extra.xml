@@ -13,8 +13,9 @@
         android:layout_width="match_parent"
         android:layout_height="250dp"
         android:scaleType="centerCrop"
-        android:src="@drawable/randomprofilepic2"
+        android:src="@drawable/baseline_pictures_24"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <!-- TextView for Establishment Name -->
@@ -112,16 +113,35 @@
         android:layout_height="wrap_content"
         app:layout_constraintTop_toBottomOf="@+id/mapViewContainer"
         android:layout_marginTop="16dp"
+        android:textSize="32dp"
         android:text="Pictures" />
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:layout_width="375dp"
-        android:layout_height="250dp"
-        android:layout_marginTop="16dp"
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/photosCard"
+        android:layout_width="390dp"
+        android:layout_height="390dp"
+        android:layout_marginBottom="25dp"
+        android:background="@drawable/rounded_card"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView_pictures"
-        tools:listitem="@layout/listing_small_image_item"/>
+        app:layout_constraintTop_toBottomOf="@+id/textView_pictures">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/imagesRV"
+                android:layout_width="375dp"
+                android:layout_height="wrap_content"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:listitem="@layout/listing_large_static_image_item" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </com.google.android.material.card.MaterialCardView>
 </androidx.constraintlayout.widget.ConstraintLayout>
     <!-- ImageView at the top -->
 

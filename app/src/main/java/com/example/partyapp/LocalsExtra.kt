@@ -1,25 +1,23 @@
 package com.example.partyapp
 
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.widget.Button
+import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
+import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.google.android.flexbox.FlexboxLayoutManager
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
-import com.google.android.gms.maps.MapView
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
-import com.google.android.gms.location.FusedLocationProviderClient
-import com.google.android.gms.location.LocationCallback
-import com.google.android.gms.location.LocationRequest
-import com.google.android.gms.location.LocationResult
-import com.google.android.gms.location.LocationServices
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseAuth
@@ -28,7 +26,7 @@ import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
-import kotlin.properties.Delegates
+import com.google.firebase.storage.FirebaseStorage
 
 class LocalsExtra : AppCompatActivity(), OnMapReadyCallback {
     private lateinit var auth: FirebaseAuth
@@ -39,22 +37,26 @@ class LocalsExtra : AppCompatActivity(), OnMapReadyCallback {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.locals_extra)
         auth = Firebase.auth
-        eventName = intent.getStringExtra("name").toString()
-        val host = intent.getStringExtra("host")
-        val event = intent.getParcelableExtra<EventModel>("event")
-        val address = intent.getStringExtra("address")
-        val start = intent.getStringExtra("start")
-        val end = intent.getStringExtra("end")
-        val desc = intent.getStringExtra("desc")
-        lat = intent.getDoubleExtra("lat",0.0)
-        long = intent.getDoubleExtra("long",0.0)
-        val imagePathsArray = intent.getStringArrayExtra("imgPaths")?.toList() ?: emptyList()
-        val tags = intent.getStringArrayExtra("tags")?.toList() ?: emptyList()
-        val sanTags = intent.getStringArrayExtra("sanitizedTags")?.toList() ?: emptyList()
+        val event = intent.getParcelableExtra<EventModel>("event")!!
+        eventName = event.name!!
+        val host = event.host!!
+        val address = event.address!!
+        val start = event.start!!
+        val end = event.end!!
+        val desc = event.desc!!
+        lat = event.lat!!
+        long = event.long!!
+        val imagePathsArray = event.imgPaths ?: emptyList<String>()
+        val imageItems = mutableListOf<ImageModel>()
+        for(imagePath in imagePathsArray){
+            imageItems.add(ImageModel(null,imagePath))
+        }
+        val tags = event.tags ?: emptyList<String>()
+        val sanTags = event.sanitizedTags ?: emptyList<String>()
         val tagModelList = mutableListOf<TagModel>()
         for(tag in tags){
             tagModelList.add(TagModel(text=tag))
-            Log.i("Tags","$tag")
+            Log.i("Tags",tag)
         }
         val nearbyMiniList = mutableListOf<EstablishmentModel>()
         val geoHelper = GeoHelper(this)
@@ -63,22 +65,39 @@ class LocalsExtra : AppCompatActivity(), OnMapReadyCallback {
         val startTimeTextView = findViewById<TextView>(R.id.startTimeTextView)
         val endTimeTextView = findViewById<TextView>(R.id.endTimeTextView)
         val addressTextView = findViewById<TextView>(R.id.addressTextView)
+        val addressTextView2 = findViewById<TextView>(R.id.addressMapsTextView)
 //        val distanceTextView = findViewById<TextView>(R.id.distanceTextView)
 //        val dayOfWeekTextView = findViewById<TextView>(R.id.dayOfWeekTextView)
 //        val dayOfMonthTextView = findViewById<TextView>(R.id.dayOfMonthTextView)
         val descriptionTextView = findViewById<TextView>(R.id.descriptionTextView)
+        val whosGoingButton = findViewById<Button>(R.id.see_who_is_going)
+        whosGoingButton.setOnClickListener {
+            val intent = Intent(this,SeeAttendeesActivity::class.java).apply {
+                putExtra("pushId",event.pushId)
+                putExtra("owner", event.host == auth.currentUser!!.uid)
+            }
+            this.startActivity(intent)
+        }
         val joinButton = findViewById<Button>(R.id.join_event)
         joinButton.setOnClickListener {
             event?.pushId?.let { it1 ->
                 FirebaseDatabase.getInstance().getReference("UsersAttending")
                     .child(auth.currentUser!!.uid).child(
-                    it1
-                )
+                        it1
+                    )
             }?.setValue(event)
+            event?.pushId?.let { it1 ->
+                FirebaseDatabase.getInstance().getReference("EventAttendees")
+                    .child(it1).child(
+                        auth.currentUser!!.uid
+                    )
+            }?.setValue(false)
+            joinButton.text = "EVENT JOINED!"
         }
         eventNameTextView.text = eventName
 //        hostNameTextView.text = host
         addressTextView.text = address
+        addressTextView2.text = address
         startTimeTextView.text = start
         endTimeTextView.text = end
 //        distanceTextView.text = distance
@@ -90,7 +109,6 @@ class LocalsExtra : AppCompatActivity(), OnMapReadyCallback {
         val tagsAdapter = TagsAdapter(false, tagModelList)
         tagsRV.layoutManager = FlexboxLayoutManager(this)
         tagsRV.adapter = tagsAdapter
-
 
         val nearbyRV = findViewById<RecyclerView>(R.id.nearbyEstablishmentRV)
         val miniEstAdapter = MiniEstAdapter(nearbyMiniList, this, arrayOf<Double>(lat,long))
@@ -106,41 +124,8 @@ class LocalsExtra : AppCompatActivity(), OnMapReadyCallback {
                         for (establishmentSnapshot in uniqueIDSnapshot.children) {
                             val establishmentName = establishmentSnapshot.key
                             establishmentName?.let {
-                                val lat = establishmentSnapshot.child("lat").getValue(Double::class.java)
-                                val long = establishmentSnapshot.child("long").getValue(Double::class.java)
-                                val name = establishmentSnapshot.child("name").getValue(String::class.java)
-                                val push = establishmentSnapshot.child("pushId").getValue(String::class.java)
-                                val desc = establishmentSnapshot.child("desc").getValue(String::class.java)
-                                val owner = establishmentSnapshot.child("ownerAccount").getValue(String::class.java)
-                                val estAddress = geoHelper.getAddress(lat,long)
-                                val imgPathsSnapshot = establishmentSnapshot.child("imgPaths")
-                                val imagePaths = mutableListOf<String>()
-                                for (imageSnapshot in imgPathsSnapshot.children) {
-                                    val imagePath = imageSnapshot.getValue(String::class.java)
-                                    imagePath?.let {
-                                        imagePaths.add(it)
-                                    }
-                                }
-                                val tagsSnapshot = establishmentSnapshot.child("tags")
-                                val tags = mutableListOf<String>()
-                                for (tagSnapshot in tagsSnapshot.children) {
-                                    val tag = tagSnapshot.getValue(String::class.java)
-                                    tag?.let {
-                                        tags.add(it)
-                                    }
-                                }
-                                val sanTagsSnapshot = establishmentSnapshot.child("sanitizedTags")
-                                val sanTags = mutableListOf<String>()
-                                for (sanTagSnapshot in sanTagsSnapshot.children) {
-                                    val sanTag = sanTagSnapshot.getValue(String::class.java)
-                                    sanTag?.let {
-                                        sanTags.add(it)
-                                    }
-                                }
-                                ///i need establishmentName, address, distance, description, ownerAccount,iP
-                                // Create Establishment object and add to the list
-                                val establishment = EstablishmentModel(push,owner,lat,long,name,desc,estAddress,imagePaths,tags,sanTags)
-                                nearbyMiniList.add(establishment)
+                                val establishmentM = establishmentSnapshot.getValue(EstablishmentModel::class.java)!!
+                                nearbyMiniList.add(establishmentM)
 
                             }
                         }
@@ -156,11 +141,30 @@ class LocalsExtra : AppCompatActivity(), OnMapReadyCallback {
         })
 
 
+
         val mapFragment = supportFragmentManager
             .findFragmentById(R.id.mapFragment) as SupportMapFragment
         mapFragment.getMapAsync(this)
 
 //        Toast.makeText(this,imagePathsArray[0].toString(),Toast.LENGTH_LONG).show()
+
+        val imagesRV = findViewById<RecyclerView>(R.id.imagesRV)
+        val imagesAdapter = StaticImageAdapter(imageItems, "eventImages")
+        val imageLayoutManager = LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
+        imagesRV.layoutManager = imageLayoutManager
+        imagesRV.adapter = imagesAdapter
+
+        val headerImage = findViewById<ImageView>(R.id.headerImage)
+        var storageRef = FirebaseStorage.getInstance().reference.child("eventImages")
+        if(imagePathsArray.isNotEmpty()){
+            Glide.with(headerImage)
+                .load(storageRef.child(imagePathsArray[0]) )
+                .diskCacheStrategy(DiskCacheStrategy.NONE)
+                .skipMemoryCache(true)
+                .centerCrop()
+                .error(R.drawable.baseline_pictures_24)
+                .into(headerImage)
+        }
 
         val concatenatedPaths = imagePathsArray.take(6).joinToString("\n")
 //        val imagePathsTextView = findViewById<TextView>(R.id.imagePathsTextView)

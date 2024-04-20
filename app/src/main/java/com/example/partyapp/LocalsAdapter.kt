@@ -15,7 +15,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import java.time.LocalDateTime
 
-@RequiresApi(Build.VERSION_CODES.O)
+@RequiresApi(Build.VERSION_CODES.TIRAMISU)
 class LocalsAdapter(private val context: Context, private val userLocation: Array<Double>, private val geo: GeoHelper, private val localsList: List<EventModel>) :
     RecyclerView.Adapter<LocalsAdapter.LocalViewHolder>() {
 
@@ -38,25 +38,9 @@ class LocalsAdapter(private val context: Context, private val userLocation: Arra
 //                Toast.makeText(context, "Hello World", Toast.LENGTH_LONG).show()
                 val intent = Intent(context,LocalsExtra::class.java).apply {
                     putExtra("event",currentItem)
-                    putExtra("name",currentItem.name)
-                    putExtra("host",currentItem.host)
-                    putExtra("address",currentItem.address)
-                    putExtra("start",currentItem.start)
-                    putExtra("end",currentItem.end)
                     putExtra("distance",geo.calculateDistance(userLocation[0], userLocation[1], currentItem.lat!!,currentItem.long!!).toString())
-                    putExtra("lat",currentItem.lat)
-                    putExtra("long",currentItem.long)
                     putExtra("dayOfWeek", LocalDateTime.parse(currentItem.start).dayOfWeek)
                     putExtra("dayOfMonth",LocalDateTime.parse(currentItem.start).dayOfMonth)
-                    /*
-                    i need the images
-                    i need description
-                     */
-                    putExtra("desc",currentItem.desc)
-                    putExtra("tags", (currentItem.tags)?.toTypedArray())
-                    putExtra("sanitizedTags", (currentItem.sanitizedTags)?.toTypedArray())
-                    putExtra("imgPaths", (currentItem.imgPaths)?.toTypedArray())
-
                 }
                 context.startActivity(intent)
             }

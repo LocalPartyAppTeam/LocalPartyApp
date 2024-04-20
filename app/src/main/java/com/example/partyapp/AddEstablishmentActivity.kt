@@ -27,7 +27,6 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
-import androidx.core.net.toUri
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.flexbox.FlexboxLayoutManager
@@ -60,8 +59,8 @@ class AddEstablishmentActivity : AppCompatActivity(), OnMapReadyCallback {
     private var locationManager : LocationManager? = null
     private val PERMISSION_ID = 44
     private val today = LocalDateTime.now()
-    private val blank = AddPictureRVEntryModel()
-    private val photosArray: MutableList<AddPictureRVEntryModel> = mutableListOf<AddPictureRVEntryModel>(blank)
+    private val blank = ImageModel()
+    private val photosArray: MutableList<ImageModel> = mutableListOf<ImageModel>(blank)
     private val tagsArray: MutableList<TagModel> = mutableListOf<TagModel>()
     private val storageRef = FirebaseStorage.getInstance().reference.child("establishmentImages")
     private lateinit var photosAdapter: EntryPhotoAdapter
@@ -74,9 +73,8 @@ class AddEstablishmentActivity : AppCompatActivity(), OnMapReadyCallback {
             for(image in uris) {
                 if(photosAdapter.itemCount <= 6){
                     photosArray.add(photosAdapter.itemCount-1,
-                        AddPictureRVEntryModel(
+                        ImageModel(
                             image,
-                            auth.currentUser!!.email,
                             auth.currentUser!!.email + image.toString()
                         )
                     )
@@ -132,6 +130,7 @@ class AddEstablishmentActivity : AppCompatActivity(), OnMapReadyCallback {
         val submitButton = findViewById<Button>(R.id.EstablishmentSubmitButton)
         submitButton.setOnClickListener {
             val myRef = database.getReference("TaggedEstablishments")
+            val pushRef = myRef.child(auth.currentUser!!.uid).push()
             val name = establishmentName.text.toString()
             val desc = establishmentDescription.text.toString()
             val photoList = mutableListOf<String>()
@@ -139,9 +138,16 @@ class AddEstablishmentActivity : AppCompatActivity(), OnMapReadyCallback {
             val sanTagsList = mutableListOf<String>()
             val geoHelper = GeoHelper(this)
             val address = geoHelper.getAddress(lat,long)
-            for(entry in photosArray){
-                if(entry.image.toString() != "null") {
-                    photoList.add(entry.image.toString())
+            auth.currentUser?.let {
+                var i = 0
+                for(photo in photosArray){
+                    photosArray[i].image?.let { it1 ->
+                        photoList.add(pushRef.key!!+ i.toString())
+                        storageRef.child(photoList[i]).putFile(it1).addOnSuccessListener {
+                            Log.d("Update: ", "Uploaded Event Photos")
+                        }
+                    }
+                    i+=1
                 }
             }
             for(entry in tagsArray){
@@ -152,7 +158,6 @@ class AddEstablishmentActivity : AppCompatActivity(), OnMapReadyCallback {
                 tagText = re.replace(tagText, "")
                 sanTagsList.add(tagText)
             }
-            val pushRef = myRef.child(auth.currentUser!!.uid).push()
             val establishment = EstablishmentModel(pushRef.key, auth.currentUser!!.uid, lat, long, name, desc, address,
                 photoList,
                 tagsList,
@@ -160,13 +165,6 @@ class AddEstablishmentActivity : AppCompatActivity(), OnMapReadyCallback {
             )
             pushRef.setValue(establishment).addOnSuccessListener {
                 Log.d(ContentValues.TAG, ":D")
-            }
-            auth.currentUser?.let {
-                for(photo in photoList){
-                    storageRef.child(photo.toString().replace('/','_')).putFile(photo.toUri()).addOnSuccessListener {
-                        Log.d("Update: ", "Uploaded Establishment Photos")
-                    }
-                }
             }
             startActivity(Intent(this@AddEstablishmentActivity, MainActivity::class.java))
             finish()
@@ -324,7 +322,7 @@ class AddEstablishmentActivity : AppCompatActivity(), OnMapReadyCallback {
     inner class EntryPhotoAdapter
         (
         private val context: Context,
-        private val entries: MutableList<AddPictureRVEntryModel>,
+        private val entries: MutableList<ImageModel>,
     ): RecyclerView.Adapter<EntryPhotoAdapter.EntryViewHolder>() {
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): EntryViewHolder {
             val view = LayoutInflater.from(parent.context)
@@ -398,7 +396,7 @@ class AddEstablishmentActivity : AppCompatActivity(), OnMapReadyCallback {
 
 
         inner class EntryViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView), View.OnClickListener {
-            var item: AddPictureRVEntryModel? = null
+            var item: ImageModel? = null
             val photo: ImageView = itemView.findViewById(R.id.addedPhoto)
             val plus: ImageView = itemView.findViewById(R.id.addPhotoIcon)
 
