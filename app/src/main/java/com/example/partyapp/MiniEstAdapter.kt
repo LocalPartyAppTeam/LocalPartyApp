@@ -37,14 +37,7 @@ class MiniEstAdapter(private val miniEstArray: MutableList<EstablishmentModel>, 
         holder.descTextView.text = miniEst.desc
         holder.miniEstCard.setOnClickListener{
             val intent = Intent(context,EstablishmentExtra::class.java).apply {
-                putExtra("name",miniEst.name)
-                putExtra("owner",miniEst.ownerAccount)
-                putExtra("lat",miniEst.lat)
-                putExtra("long",miniEst.long)
-                putExtra("desc",miniEst.desc)
-                putExtra("address",miniEst.address)
-                putExtra("tags",(miniEst.tags)?.toTypedArray())
-                putExtra("imgPaths",(miniEst.imgPaths)?.toTypedArray())
+                putExtra("establishment",miniEst)
             }
             context.startActivity(intent)
         }

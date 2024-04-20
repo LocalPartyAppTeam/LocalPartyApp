@@ -37,40 +37,17 @@ class MyEventsAdapter(private val context: Context,
                 if(owner){
                     val intent = Intent(context,OwnerEventExtraActivity::class.java).apply {
                         putExtra("event",currentItem)
-                        putExtra("name",currentItem.name)
-                        putExtra("host",currentItem.host)
-                        putExtra("address",currentItem.address)
-                        putExtra("start",currentItem.start)
-                        putExtra("end",currentItem.end)
                         putExtra("distance",geo.calculateDistance(userLocation[0], userLocation[1], currentItem.lat!!,currentItem.long!!).toString())
-                        putExtra("lat",currentItem.lat)
-                        putExtra("long",currentItem.long)
                         putExtra("dayOfWeek", LocalDateTime.parse(currentItem.start).dayOfWeek)
                         putExtra("dayOfMonth",LocalDateTime.parse(currentItem.start).dayOfMonth)
-                        putExtra("desc",currentItem.desc)
-                        putExtra("tags", (currentItem.tags)?.toTypedArray())
-                        putExtra("sanitizedTags", (currentItem.sanitizedTags)?.toTypedArray())
-                        putExtra("imgPaths", (currentItem.imgPaths)?.toTypedArray())
-
                     }
                     context.startActivity(intent)
                 }else{
                     val intent = Intent(context,LocalsExtra::class.java).apply {
                         putExtra("event",currentItem)
-                        putExtra("name",currentItem.name)
-                        putExtra("host",currentItem.host)
-                        putExtra("address",currentItem.address)
-                        putExtra("start",currentItem.start)
-                        putExtra("end",currentItem.end)
                         putExtra("distance",geo.calculateDistance(userLocation[0], userLocation[1], currentItem.lat!!,currentItem.long!!).toString())
-                        putExtra("lat",currentItem.lat)
-                        putExtra("long",currentItem.long)
                         putExtra("dayOfWeek", LocalDateTime.parse(currentItem.start).dayOfWeek)
                         putExtra("dayOfMonth",LocalDateTime.parse(currentItem.start).dayOfMonth)
-                        putExtra("desc",currentItem.desc)
-                        putExtra("tags", (currentItem.tags)?.toTypedArray())
-                        putExtra("sanitizedTags", (currentItem.sanitizedTags)?.toTypedArray())
-                        putExtra("imgPaths", (currentItem.imgPaths)?.toTypedArray())
 
                     }
                     context.startActivity(intent)

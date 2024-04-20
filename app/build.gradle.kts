@@ -4,6 +4,7 @@ plugins {
     id("com.google.gms.google-services")
     id("com.google.android.libraries.mapsplatform.secrets-gradle-plugin") version "2.0.1"
     id("kotlin-kapt")
+    id("kotlin-parcelize")
 }
 
 android {
@@ -107,5 +108,6 @@ dependencies {
     testImplementation("junit:junit:4.12")
     androidTestImplementation("androidx.test.ext:junit:1.1.1")
     androidTestImplementation ("androidx.test.espresso:espresso-core:3.2.0")
-    //kapt("com.github.bumptech.glide:compiler:4.14.2")
+    kapt("com.github.bumptech.glide:compiler:4.14.2")
+    implementation("com.firebaseui:firebase-ui-storage:8.0.2")
 }

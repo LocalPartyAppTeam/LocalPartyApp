@@ -4,13 +4,17 @@ import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.widget.Button
+import android.widget.ImageView
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
+import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.google.android.flexbox.FlexboxLayoutManager
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
+import com.google.firebase.storage.FirebaseStorage
 
 class OwnerEventExtraActivity : AppCompatActivity() {
     private lateinit var auth: FirebaseAuth
@@ -27,9 +31,9 @@ class OwnerEventExtraActivity : AppCompatActivity() {
         val desc = event.desc
         val lat = event.lat
         val long = event.long
-        val imagePathsArray = intent.getStringArrayExtra("imgPaths")?.toList() ?: emptyList()
-        val tags = intent.getStringArrayExtra("tags")?.toList() ?: emptyList()
-        val sanTags = intent.getStringArrayExtra("sanTags")?.toList() ?: emptyList()
+        val imagePathsArray = event.imgPaths ?: emptyList<String>()
+        val tags = event.tags ?: emptyList<String>()
+        val sanTags = event.sanitizedTags ?: emptyList<String>()
         val tagModelList = mutableListOf<TagModel>()
         Log.i("CHECK2","${event.tags?.size}")
         Log.i("CHECK2","${tags.size}")
@@ -62,11 +66,27 @@ class OwnerEventExtraActivity : AppCompatActivity() {
             this.startActivity(intent)
         }
 
+
         eventNameTextView.text = eventName
         addressTextView.text = address
         startTimeTextView.text = start
         endTimeTextView.text = end
         descriptionTextView.text = desc
+        val headerImage = findViewById<ImageView>(R.id.headerImage)
+
+        var storageRef = FirebaseStorage.getInstance().reference.child("eventImages")
+        if(imagePathsArray.isNotEmpty()){
+            Glide.with(headerImage)
+                .load(storageRef.child(imagePathsArray[0]) )
+                .diskCacheStrategy(DiskCacheStrategy.NONE)
+                .skipMemoryCache(true)
+                .centerCrop()
+                .error(R.drawable.baseline_pictures_24)
+                .into(headerImage)
+        }
+
+
+
 
 
 

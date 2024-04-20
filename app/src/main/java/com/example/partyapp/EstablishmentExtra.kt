@@ -1,10 +1,14 @@
 package com.example.partyapp
 import android.os.Bundle
 import android.util.Log
+import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
+import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.google.android.flexbox.FlexboxLayoutManager
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
@@ -18,6 +22,7 @@ import com.google.android.gms.location.LocationRequest
 import com.google.android.gms.location.LocationResult
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.maps.OnMapReadyCallback
+import com.google.firebase.storage.FirebaseStorage
 
 class EstablishmentExtra : AppCompatActivity(), OnMapReadyCallback {
     private var lat: Double = 0.0
@@ -27,15 +32,19 @@ class EstablishmentExtra : AppCompatActivity(), OnMapReadyCallback {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.establishment_extra)
-
-        establishmentName = intent.getStringExtra("name").toString()
-        val owner = intent.getStringExtra("owner")
-        val address = intent.getStringExtra("address")
-        val description = intent.getStringExtra("desc")
-        lat = intent.getDoubleExtra("lat",0.0)
-        long = intent.getDoubleExtra("long",0.0)
-        val tags = intent.getStringArrayExtra("tags")?.toList() ?: emptyList()
-        val imagePathsArray = intent.getStringArrayExtra("imgPaths")?.toList() ?: emptyList()
+        val establishment = intent.getParcelableExtra<EstablishmentModel>("establishment")!!
+        establishmentName = establishment.name!!
+        val owner = establishment.ownerAccount!!
+        val address = establishment.address!!
+        val description = establishment.desc!!
+        lat = establishment.lat!!
+        long = establishment.long!!
+        val tags = establishment.tags ?: emptyList<String>()
+        val imagePathsArray = establishment.imgPaths ?: emptyList<String>()
+        val imageItems = mutableListOf<ImageModel>()
+        for(imagePath in imagePathsArray){
+            imageItems.add(ImageModel(null,imagePath))
+        }
         val tagModelList = mutableListOf<TagModel>()
         for(tag in tags){
             tagModelList.add(TagModel(text=tag))
@@ -62,6 +71,24 @@ class EstablishmentExtra : AppCompatActivity(), OnMapReadyCallback {
         addressTextView.text = "$address"
         descriptionTextView.text = "$description"
 //        distanceTextView.text = "Distance: $distance"
+
+        val imagesRV = findViewById<RecyclerView>(R.id.imagesRV)
+        val imagesAdapter = StaticImageAdapter(imageItems, "establishmentImages")
+        val imageLayoutManager = LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
+        imagesRV.layoutManager = imageLayoutManager
+        imagesRV.adapter = imagesAdapter
+
+        val headerImage = findViewById<ImageView>(R.id.estExtraHeaderImage)
+        var storageRef = FirebaseStorage.getInstance().reference.child("establishmentImages")
+        if(imagePathsArray.isNotEmpty()){
+            Glide.with(headerImage)
+                .load(storageRef.child(imagePathsArray[0]) )
+                .diskCacheStrategy(DiskCacheStrategy.NONE)
+                .skipMemoryCache(true)
+                .centerCrop()
+                .error(R.drawable.baseline_pictures_24)
+                .into(headerImage)
+        }
 
 
     }

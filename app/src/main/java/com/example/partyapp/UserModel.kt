@@ -1,5 +1,9 @@
 package com.example.partyapp
 
+import android.os.Parcelable
+import kotlinx.parcelize.Parcelize
+
+@Parcelize
 data class UserModel(
     var firstName: String?= null,
     var lastName: String?= null,
@@ -10,5 +14,5 @@ data class UserModel(
     var profilePicture: String?= null,
     var idPicture: String?= null,
     var friends: MutableList<String>?= null,
-    var idVerified: Boolean?= false)
+    var idVerified: Boolean?= false): Parcelable{}
 

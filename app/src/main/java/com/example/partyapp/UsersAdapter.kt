@@ -41,7 +41,7 @@ class UsersAdapter(private val userList: MutableList<UserModel>, private val own
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val userListItem = userList[position]
-        holder.fullnameTV.text = userListItem.firstName + userListItem.lastName
+        holder.fullnameTV.text = userListItem.firstName + " " + userListItem.lastName
         holder.ageTV.text = userListItem.age.toString()
         holder.usernameTV.text = userListItem.username.toString()
         Glide.with(holder.itemView)
