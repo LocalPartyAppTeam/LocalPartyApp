@@ -1,9 +1,13 @@
 package com.example.partyapp
 
 import android.content.Intent
+import android.graphics.Bitmap
+import android.graphics.Color
 import android.os.Bundle
 import android.util.Log
+import android.view.View
 import android.widget.Button
+import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
@@ -19,6 +23,7 @@ import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
 import com.google.android.gms.maps.OnMapReadyCallback
+import com.google.android.material.card.MaterialCardView
 import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.auth
@@ -27,6 +32,8 @@ import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
 import com.google.firebase.storage.FirebaseStorage
+import com.google.zxing.BarcodeFormat
+import com.google.zxing.MultiFormatWriter
 
 class LocalsExtra : AppCompatActivity(), OnMapReadyCallback {
     private lateinit var auth: FirebaseAuth
@@ -37,6 +44,7 @@ class LocalsExtra : AppCompatActivity(), OnMapReadyCallback {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.locals_extra)
         auth = Firebase.auth
+        val database = FirebaseDatabase.getInstance()
         val event = intent.getParcelableExtra<EventModel>("event")!!
         eventName = event.name!!
         val host = event.host!!
@@ -44,6 +52,7 @@ class LocalsExtra : AppCompatActivity(), OnMapReadyCallback {
         val start = event.start!!
         val end = event.end!!
         val desc = event.desc!!
+        val userID = auth.currentUser!!.uid
         lat = event.lat!!
         long = event.long!!
         val imagePathsArray = event.imgPaths ?: emptyList<String>()
@@ -71,6 +80,43 @@ class LocalsExtra : AppCompatActivity(), OnMapReadyCallback {
 //        val dayOfMonthTextView = findViewById<TextView>(R.id.dayOfMonthTextView)
         val descriptionTextView = findViewById<TextView>(R.id.descriptionTextView)
         val whosGoingButton = findViewById<Button>(R.id.see_who_is_going)
+        val qrMaskTV = findViewById<TextView>(R.id.qr_Mask)
+        val qrImage = findViewById<ImageView>(R.id.qr_code_image)
+        val qrCard = findViewById<MaterialCardView>(R.id.qr_card)
+        val viewQrCardButton = findViewById<Button>(R.id.myQrButton)
+        val qrCardBackButton = findViewById<ImageButton>(R.id.qrCardBackButton)
+
+        fun genBarcode() {
+            val inputValue = auth.currentUser!!.uid
+            if (inputValue.isNotEmpty()) {
+                val mwriter = MultiFormatWriter()
+                try {
+                    val matrix = mwriter.encode(inputValue, BarcodeFormat.CODE_128, 300, 300)
+                    val bitmap = Bitmap.createBitmap(300, 300, Bitmap.Config.RGB_565)
+                    for (i in 0 until 300) {
+                        for (j in 0 until 300) {
+                            bitmap.setPixel(i, j, if (matrix[i, j]) Color.BLACK else Color.WHITE)
+                        }
+                    }
+                    qrImage.setImageBitmap(bitmap)
+                } catch (e: Exception) {
+                    Toast.makeText(this, "Exception $e", Toast.LENGTH_SHORT).show()
+                    Log.i( "barcode","Exception $e")
+                }
+            }
+        }
+        qrMaskTV.setOnClickListener {
+
+        }
+        viewQrCardButton.setOnClickListener{
+            qrMaskTV.visibility = View.VISIBLE
+            qrCard.visibility = View.VISIBLE
+            genBarcode()
+        }
+        qrCardBackButton.setOnClickListener{
+            qrMaskTV.visibility = View.GONE
+            qrCard.visibility = View.GONE
+        }
         whosGoingButton.setOnClickListener {
             val intent = Intent(this,SeeAttendeesActivity::class.java).apply {
                 putExtra("pushId",event.pushId)
@@ -81,18 +127,30 @@ class LocalsExtra : AppCompatActivity(), OnMapReadyCallback {
         val joinButton = findViewById<Button>(R.id.join_event)
         joinButton.setOnClickListener {
             event?.pushId?.let { it1 ->
-                FirebaseDatabase.getInstance().getReference("UsersAttending")
+                database.getReference("UsersAttending")
                     .child(auth.currentUser!!.uid).child(
                         it1
                     )
             }?.setValue(event)
             event?.pushId?.let { it1 ->
-                FirebaseDatabase.getInstance().getReference("EventAttendees")
+                database.getReference("EventAttendees")
                     .child(it1).child(
                         auth.currentUser!!.uid
                     )
             }?.setValue(false)
             joinButton.text = "EVENT JOINED!"
+            joinButton.visibility = View.GONE
+            viewQrCardButton.visibility = View.VISIBLE
+        }
+        val eventAttendeesCall = database.getReference("EventAttendees").child(event.pushId!!).get()
+        eventAttendeesCall.addOnSuccessListener { attendeesSnapshot ->
+            for(uidSnapshot in attendeesSnapshot.children){
+                val uid = uidSnapshot.key
+                if( uid == userID){
+                    joinButton.visibility = View.GONE
+                    viewQrCardButton.visibility = View.VISIBLE
+                }
+            }
         }
         eventNameTextView.text = eventName
 //        hostNameTextView.text = host
@@ -115,7 +173,7 @@ class LocalsExtra : AppCompatActivity(), OnMapReadyCallback {
         nearbyRV.layoutManager = LinearLayoutManager(this, RecyclerView.HORIZONTAL,false)
         nearbyRV.adapter = miniEstAdapter
 
-        val databaseReference = FirebaseDatabase.getInstance().getReference("TaggedEstablishments")
+        val databaseReference = database.getReference("TaggedEstablishments")
         databaseReference.addListenerForSingleValueEvent(object : ValueEventListener {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
                 for (uniqueIDSnapshot in dataSnapshot.children) {

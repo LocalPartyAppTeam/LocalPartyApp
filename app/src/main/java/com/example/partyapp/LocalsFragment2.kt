@@ -35,7 +35,7 @@ import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import java.time.format.TextStyle
 
-@RequiresApi(Build.VERSION_CODES.O)
+@RequiresApi(Build.VERSION_CODES.TIRAMISU)
 class LocalsFragment2 : Fragment() {
     private lateinit var recyclerView: RecyclerView
     private lateinit var recyclerViewE: RecyclerView
@@ -72,7 +72,7 @@ class LocalsFragment2 : Fragment() {
         eventsReference = FirebaseDatabase.getInstance().getReference("TaggedEvents")
 
         val geoHelper = GeoHelper(requireContext())
-        val loc = geoHelper.requestLocation()
+        val loc = geoHelper.getLastLocation()
         val establishmentsList = mutableListOf<EstablishmentModel>()
         val localsList = mutableListOf<EventModel>()
         val searchTagStaticList = mutableListOf<TagModel>()
