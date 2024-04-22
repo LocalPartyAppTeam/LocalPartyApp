@@ -28,6 +28,7 @@ import com.google.android.material.card.MaterialCardView
 import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.auth
+import kotlinx.coroutines.runBlocking
 import kotlin.math.pow
 
 //import com.google.firebase.database.core.view.View
@@ -53,8 +54,8 @@ class LocalsFragment2 : Fragment() {
     private lateinit var auth: FirebaseAuth
 
 
-    private var currentLatitude: Double = 0.0
-    private var currentLongitude: Double = 0.0
+    private var currentLatitude: Double = 40.7357
+    private var currentLongitude: Double = -74.172363
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -72,7 +73,7 @@ class LocalsFragment2 : Fragment() {
         eventsReference = FirebaseDatabase.getInstance().getReference("TaggedEvents")
 
         val geoHelper = GeoHelper(requireContext())
-        val loc = geoHelper.getLastLocation()
+        val loc = runBlocking{ geoHelper.requestLocation() }
         val establishmentsList = mutableListOf<EstablishmentModel>()
         val localsList = mutableListOf<EventModel>()
         val searchTagStaticList = mutableListOf<TagModel>()
