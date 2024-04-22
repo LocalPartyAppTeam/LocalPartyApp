@@ -35,6 +35,7 @@ import com.google.firebase.database.getValue
 import com.google.firebase.storage.FirebaseStorage
 import com.google.zxing.BarcodeFormat
 import com.google.zxing.MultiFormatWriter
+import com.google.zxing.qrcode.QRCodeWriter
 
 class LocalsExtra : AppCompatActivity(), OnMapReadyCallback {
     private lateinit var auth: FirebaseAuth
@@ -99,9 +100,9 @@ class LocalsExtra : AppCompatActivity(), OnMapReadyCallback {
         fun genBarcode() {
             val inputValue = auth.currentUser!!.uid
             if (inputValue.isNotEmpty()) {
-                val mwriter = MultiFormatWriter()
+                val mwriter = QRCodeWriter()
                 try {
-                    val matrix = mwriter.encode(inputValue, BarcodeFormat.CODE_128, 300, 300)
+                    val matrix = mwriter.encode(inputValue, BarcodeFormat.QR_CODE, 300, 300)
                     val bitmap = Bitmap.createBitmap(300, 300, Bitmap.Config.RGB_565)
                     for (i in 0 until 300) {
                         for (j in 0 until 300) {
