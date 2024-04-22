@@ -331,38 +331,32 @@ class AddPartyActivity : AppCompatActivity(), OnMapReadyCallback {
     }
 
     override fun onMapReady(googleMap: GoogleMap) {
-        val loc = geoHelper.requestLocation()
-        Log.i("testdata","loc: ${loc}")
-        if(loc != null){
-            lat = loc[0]
-            long = loc[1]
-        }
 
-        // method to get the locationn
+        // method to get the location
         getLastLocation(googleMap)
         val location = LatLng(lat, long)
+        Log.i("testdata","lat: ${long}")
+        Log.i("testdata","lat: ${lat}")
         googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(location, 12F))
         googleMap.addMarker(
             MarkerOptions()
                 .position(location)
+                .title("Newark")
         )
         googleMap.setOnMapClickListener {
-                googleMap.clear()
-                val markerOptions = MarkerOptions()
-                markerOptions.position(it)
-                markerOptions.title("Party Here")
-                markerOptions.snippet("Snippet")
-                markerOptions.visible(true)
-                googleMap.addMarker(
-                    markerOptions
-                )
-                lat = it.latitude
-                long = it.longitude
-                Log.i("testdata","long: ${long}")
-                Log.i("testdata","lat: ${lat}")
+            googleMap.clear()
+            val markerOptions = MarkerOptions()
+            markerOptions.position(it)
+            markerOptions.title("Party Here")
+            markerOptions.snippet("Snippet")
+            markerOptions.visible(true)
+            googleMap.addMarker(
+                markerOptions
+            )
+            lat = it.latitude
+            long = it.longitude
         }
     }
-
     @SuppressLint("MissingPermission")
     private fun getLastLocation(googleMap: GoogleMap){
         // check if permissions are given
