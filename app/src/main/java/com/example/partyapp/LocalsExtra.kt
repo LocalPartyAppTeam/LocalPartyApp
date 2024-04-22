@@ -3,6 +3,7 @@ package com.example.partyapp
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
+import android.view.View
 import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
@@ -79,6 +80,7 @@ class LocalsExtra : AppCompatActivity(), OnMapReadyCallback {
             this.startActivity(intent)
         }
         val joinButton = findViewById<Button>(R.id.join_event)
+        val reveiewButton = findViewById<Button>(R.id.reviewButton)
         joinButton.setOnClickListener {
             event?.pushId?.let { it1 ->
                 FirebaseDatabase.getInstance().getReference("UsersAttending")
@@ -93,7 +95,23 @@ class LocalsExtra : AppCompatActivity(), OnMapReadyCallback {
                     )
             }?.setValue(false)
             joinButton.text = "EVENT JOINED!"
+            reveiewButton.visibility = View.VISIBLE
         }
+
+        reveiewButton.setOnClickListener {
+            var eventImage = "empty"
+            if (imagePathsArray.isNotEmpty()) eventImage = imagePathsArray[0]
+
+            val intent = Intent(this, AddReviewActivity::class.java).apply {
+                putExtra("uid", auth.currentUser!!.uid)
+                putExtra("eid", event.pushId)
+                putExtra("eventName", event.name)
+                putExtra("eventImage", eventImage)
+            }
+            this.startActivity(intent)
+            reveiewButton.text = "EDIT REVIEW"
+        }
+
         eventNameTextView.text = eventName
 //        hostNameTextView.text = host
         addressTextView.text = address

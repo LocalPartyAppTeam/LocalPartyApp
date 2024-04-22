@@ -109,4 +109,12 @@
         <item name="android:textColor">@color/white</item>
         <item name="android:textFontWeight" tools:targetApi="p">1000</item>
     </style>
+    <style name="Widget.Base.Theme.PartyApp.MyView" parent="">
+        <item name="android:background">@color/gray_400</item>
+        <item name="exampleColor">@color/light_blue_400</item>
+    </style>
+    <style name="MyRatingBar" parent="@style/Widget.AppCompat.RatingBar.Indicator">
+        <item name="android:progressDrawable">@drawable/svgviewer_output</item>
+        <item name="android:indeterminateDrawable">@drawable/svgviewer_output</item>
+    </style>
 </resources>
