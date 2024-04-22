@@ -31,6 +31,7 @@ import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
+import com.google.firebase.database.getValue
 import com.google.firebase.storage.FirebaseStorage
 import com.google.zxing.BarcodeFormat
 import com.google.zxing.MultiFormatWriter
@@ -83,8 +84,17 @@ class LocalsExtra : AppCompatActivity(), OnMapReadyCallback {
         val qrMaskTV = findViewById<TextView>(R.id.qr_Mask)
         val qrImage = findViewById<ImageView>(R.id.qr_code_image)
         val qrCard = findViewById<MaterialCardView>(R.id.qr_card)
+        val qrFullname = findViewById<TextView>(R.id.qr_full_name)
+        val qrUsername = findViewById<TextView>(R.id.qr_username)
         val viewQrCardButton = findViewById<Button>(R.id.myQrButton)
         val qrCardBackButton = findViewById<ImageButton>(R.id.qrCardBackButton)
+
+        val qrnamefill = database.getReference("Users").child(auth.currentUser!!.uid).get()
+        qrnamefill.addOnSuccessListener {
+            val user = it.getValue(UserModel::class.java)
+            qrFullname.text = user!!.firstName + " " + user.lastName
+            qrUsername.text = user!!.username
+        }
 
         fun genBarcode() {
             val inputValue = auth.currentUser!!.uid

@@ -73,7 +73,7 @@ class LocalsFragment2 : Fragment() {
         eventsReference = FirebaseDatabase.getInstance().getReference("TaggedEvents")
 
         val geoHelper = GeoHelper(requireContext())
-        val loc = runBlocking{ geoHelper.requestLocation() }
+        val loc = geoHelper.requestLocation()
         val establishmentsList = mutableListOf<EstablishmentModel>()
         val localsList = mutableListOf<EventModel>()
         val searchTagStaticList = mutableListOf<TagModel>()

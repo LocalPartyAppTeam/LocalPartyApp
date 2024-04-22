@@ -27,7 +27,7 @@ class SeeAttendeesActivity : AppCompatActivity() {
                 val uid = uidSnapshot.key
                 val userCall = usersRef.child(uid!!).get()
                 userCall.addOnSuccessListener{userSnapshot->
-                    userList.add(userSnapshot.getValue(UserModel::class.java)!!)
+                    userSnapshot.getValue(UserModel::class.java)?.let { userList.add(it) }
                     usersAdapter.notifyDataSetChanged()
                 }
             }
