@@ -19,12 +19,12 @@
         <activity
             android:name=".AddEstablishmentActivity"
             android:exported="false"
-            android:label="@string/title_activity_add_establishment"
+            android:label="title_activity_add_establishment"
             android:theme="@style/Base.Theme.PartyApp" />
 
         <meta-data
             android:name="com.google.android.geo.API_KEY"
-            android:value="${MAPS_API_KEY}" />
+            android:value="AIzaSyBfa40xoO4qbENlMV_rkVpwYdtc-3kFvrY" />
         <meta-data
             android:name="com.google.android.gms.version"
             android:value="@integer/google_play_services_version" />
