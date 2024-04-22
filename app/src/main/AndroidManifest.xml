@@ -89,6 +89,9 @@
             android:name=".EstablishmentExtra"
             android:exported="false"
             android:label="LocalsE" />
+        <activity android:name=".AddReviewActivity"
+            android:exported="false"
+            android:label="Review"/>
     </application>
 
 </manifest>

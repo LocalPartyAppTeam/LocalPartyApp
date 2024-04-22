@@ -41,4 +41,10 @@
     <string name="username_example">\@okyereB</string>
     <string name="user_full_name_example">Okyere Boateng</string>
     <string name="id_verified_tick">verified tick</string>
+    <string name="todo">event poster</string>
+    <string name="rate_event">Rate the event:</string>
+    <string name="tell_us">Tell us more about your experience.</string>
+    <string name="rate_safety">Rate safety:</string>
+    <string name="tell_us_safety">Tell us about how safe you felt.</string>
+    <string name="submit">Submit</string>
 </resources>
