@@ -65,6 +65,12 @@ class OwnerEventExtraActivity : AppCompatActivity() {
             }
             this.startActivity(intent)
         }
+        checkInButton.setOnClickListener {
+            val intent = Intent(this,CheckInActivity::class.java).apply {
+                putExtra("pushId",event.pushId)
+            }
+            this.startActivity(intent)
+        }
 
 
         eventNameTextView.text = eventName

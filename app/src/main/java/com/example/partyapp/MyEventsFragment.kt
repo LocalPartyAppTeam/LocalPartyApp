@@ -50,8 +50,8 @@ class MyEventsFragment : Fragment() {
     private lateinit var fusedLocationClient: FusedLocationProviderClient
     private lateinit var auth: FirebaseAuth
 
-    private var currentLatitude: Double = 0.0
-    private var currentLongitude: Double = 0.0
+    private var currentLatitude: Double = 40.7357
+    private var currentLongitude: Double = -74.172363
 
     override fun onCreate(savedInstanceState: Bundle?) {super.onCreate(savedInstanceState)
         FirebaseApp.initializeApp(requireContext())

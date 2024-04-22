@@ -209,7 +209,7 @@ class AddEstablishmentActivity : AppCompatActivity(), OnMapReadyCallback {
             googleMap.clear()
             val markerOptions = MarkerOptions()
             markerOptions.position(it)
-            markerOptions.title("Party Here")
+            markerOptions.title("Establishment Here")
             markerOptions.snippet("Snippet")
             markerOptions.visible(true)
             googleMap.addMarker(
