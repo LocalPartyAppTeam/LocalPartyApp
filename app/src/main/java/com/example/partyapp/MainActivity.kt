@@ -12,7 +12,7 @@ import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 
 
-@RequiresApi(Build.VERSION_CODES.P)
+@RequiresApi(Build.VERSION_CODES.TIRAMISU)
 class MainActivity : AppCompatActivity() {
 
     private fun replaceFragment(fragment: Fragment) {
@@ -38,13 +38,12 @@ class MainActivity : AppCompatActivity() {
                 bottomNavigationBar.setOnItemSelectedListener { item ->
                     lateinit var fragment: Fragment
                     when (item.itemId) {
-                        R.id.eventsBN -> fragment = LoginFragment()
-                        R.id.localsBN -> fragment = LoginFragment()
                         R.id.profileBN -> fragment = LoginFragment()
                     }
                     replaceFragment(fragment)
                     true
                 }
+                replaceFragment(LoginFragment())
             }
             else -> {
                 this.findViewById<BottomNavigationView?>(R.id.bottom_navigation_logged_out).visibility = View.GONE
@@ -61,8 +60,9 @@ class MainActivity : AppCompatActivity() {
                     replaceFragment(fragment)
                     true
                 }
+                bottomNavigationBar.selectedItemId = R.id.profileBN
+                replaceFragment(ProfileFragment())
             }
         }
-        replaceFragment(ProfileFragment())
     }
 }

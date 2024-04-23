@@ -38,7 +38,6 @@
           android:layout_width="190dp"
           android:layout_height="30dp"
           android:singleLine="true"
-          android:text="THIS IS A TEST"
           android:paddingHorizontal="10dp"
           android:background="@drawable/rounded_text_entry"
           android:textColor="@color/white"
@@ -69,10 +68,6 @@
           android:paddingHorizontal="10dp"
           android:isScrollContainer="true"
           android:gravity="top"
-          android:text="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor inci
-            didunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exer
-            citation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure d
-            olor in reprehenderit in"
           android:textColor="@color/white"
           android:textSize="22dp"
           android:background="@drawable/rounded_text_entry"
@@ -161,7 +156,6 @@
           android:layout_width="200dp"
           android:layout_height="30dp"
           android:singleLine="true"
-          android:text="THIS IS A TEST"
           android:paddingHorizontal="10dp"
           android:background="@drawable/rounded_text_entry"
           android:textColor="@color/white"

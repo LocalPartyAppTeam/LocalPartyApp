@@ -107,6 +107,7 @@ dependencies {
     implementation("com.journeyapps:zxing-android-embedded:4.3.0")
     implementation("com.google.android.flexbox:flexbox:3.0.0")
     implementation("com.google.code.gson:gson:2.10.1")
+    implementation("com.plaid.link:sdk-core:4.3.1")
     testImplementation("junit:junit:4.12")
     androidTestImplementation("androidx.test.ext:junit:1.1.1")
     androidTestImplementation ("androidx.test.espresso:espresso-core:3.2.0")
