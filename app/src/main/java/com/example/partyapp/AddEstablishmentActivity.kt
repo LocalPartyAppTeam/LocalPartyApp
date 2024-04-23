@@ -50,7 +50,7 @@ import com.google.firebase.storage.FirebaseStorage
 import java.time.LocalDateTime
 
 private lateinit var auth: FirebaseAuth
-@RequiresApi(Build.VERSION_CODES.P)
+@RequiresApi(Build.VERSION_CODES.TIRAMISU)
 class AddEstablishmentActivity : AppCompatActivity(), OnMapReadyCallback {
 
     private var lat = 40.7357
@@ -120,6 +120,7 @@ class AddEstablishmentActivity : AppCompatActivity(), OnMapReadyCallback {
                 val tag = TagModel(text = tagEntry.text.toString())
                 tagsArray.add(tag)
                 tagsAdapter.notifyItemInserted(tagsAdapter.itemCount-1)
+                tagEntry.setText("")
             }
         }
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this)

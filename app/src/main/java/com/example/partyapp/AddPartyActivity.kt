@@ -53,7 +53,7 @@ import java.time.LocalDateTime
 
 private lateinit var auth: FirebaseAuth
 const val IMAGE_REQUEST_CODE = 100
-@RequiresApi(Build.VERSION_CODES.P)
+@RequiresApi(Build.VERSION_CODES.TIRAMISU)
 class AddPartyActivity : AppCompatActivity(), OnMapReadyCallback {
     private val geoHelper = GeoHelper(this)
     private var lat = 40.7357
@@ -191,6 +191,7 @@ class AddPartyActivity : AppCompatActivity(), OnMapReadyCallback {
                 val tag = TagModel(text = tagEntry.text.toString())
                 tagsArray.add(tag)
                 tagsAdapter.notifyItemInserted(tagsAdapter.itemCount-1)
+                tagEntry.setText("")
             }
         }
         partyStart.setOnClickListener{
