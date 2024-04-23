@@ -37,7 +37,6 @@
                 android:layout_width="190dp"
                 android:layout_height="30dp"
                 android:singleLine="true"
-                android:text="THIS IS A TEST"
                 android:paddingHorizontal="10dp"
                 android:background="@drawable/rounded_text_entry"
                 android:textColor="@color/white"
@@ -70,7 +69,6 @@
                 android:background="@drawable/rounded_text_entry"
                 android:paddingHorizontal="10dp"
                 android:singleLine="true"
-                android:text="THIS IS A TEST"
                 android:textColor="@color/white"
                 android:textSize="20dp"
                 app:layout_constraintStart_toEndOf="@id/partyStartStatic"
@@ -99,7 +97,6 @@
                 android:background="@drawable/rounded_text_entry"
                 android:paddingHorizontal="10dp"
                 android:singleLine="true"
-                android:text="THIS IS A TEST"
                 android:textColor="@color/white"
                 android:textSize="20dp"
                 app:layout_constraintStart_toEndOf="@id/partyEndStatic"
@@ -126,10 +123,6 @@
                 android:paddingHorizontal="10dp"
                 android:isScrollContainer="true"
                 android:gravity="top"
-                android:text="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor inci
-            didunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exer
-            citation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure d
-            olor in reprehenderit in"
                 android:textColor="@color/white"
                 android:textSize="22dp"
                 android:background="@drawable/rounded_text_entry"
@@ -167,7 +160,8 @@
                     android:name="com.google.android.gms.maps.SupportMapFragment"
                     android:id="@+id/mapFragment"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"/>
+                    android:layout_height="match_parent"
+                    tools:context=".MapsActivity" />
                 <View
                     android:id="@+id/mapOverlay"
                     android:layout_width="match_parent"
@@ -190,13 +184,66 @@
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/photosRecyclerView"
-                android:layout_width="400dp"
+                android:layout_width="375dp"
                 android:layout_height="260dp"
+                android:background="@drawable/rounded_text_entry"
+                android:backgroundTint="#232323"
                 app:layout_constraintTop_toBottomOf="@id/PhotosStatic"
                 android:layout_marginTop="20dp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                tools:listitem="@layout/rv_listing_image_item"/>
+                tools:listitem="@layout/add_image_item"/>
+            <TextView
+                android:id="@+id/PartyTagsTextStatic"
+                android:layout_width="65dp"
+                android:layout_height="30dp"
+                android:fontFamily="@font/inter"
+                android:text="Tags:"
+                android:textColor="@color/white"
+                android:textFontWeight="1000"
+                android:textSize="22dp"
+                app:layout_constraintStart_toStartOf="@id/partyTagsRecyclerView"
+                app:layout_constraintTop_toBottomOf="@id/photosRecyclerView"
+                android:layout_marginTop="15dp"/>
+
+            <EditText
+                android:id="@+id/PartyTagEntry"
+                android:layout_width="200dp"
+                android:layout_height="30dp"
+                android:singleLine="true"
+                android:paddingHorizontal="10dp"
+                android:background="@drawable/rounded_text_entry"
+                android:textColor="@color/white"
+                android:textSize="20dp"
+                android:layout_marginTop="15dp"
+                android:layout_marginStart="5dp"
+                app:layout_constraintStart_toEndOf="@id/PartyTagsTextStatic"
+                app:layout_constraintTop_toBottomOf="@id/photosRecyclerView" />
+
+            <Button
+                android:id="@+id/PartyAddTagButton"
+                style="@style/EventCardActionButton"
+                android:layout_width="85dp"
+                android:layout_height="30dp"
+                android:layout_marginTop="15dp"
+                android:layout_marginStart="15dp"
+                android:backgroundTint="@color/EditEventButton"
+                android:text="ADD"
+                android:textSize="14dp"
+                app:layout_constraintEnd_toEndOf="@id/partyTagsRecyclerView"
+                app:layout_constraintTop_toBottomOf="@id/photosRecyclerView" />
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/partyTagsRecyclerView"
+                android:layout_width="375dp"
+                android:layout_height="80dp"
+                app:layout_constraintTop_toBottomOf="@id/PartyAddTagButton"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                android:layout_marginTop="10dp"
+                android:background="@drawable/rounded_text_entry"
+                android:backgroundTint="#232323"
+                tools:listitem="@layout/tag_item"/>
 
             <Button
                 android:id="@+id/PartySubmitButton"
@@ -211,7 +258,7 @@
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/photosRecyclerView" />
+                app:layout_constraintTop_toBottomOf="@id/partyTagsRecyclerView" />
         </androidx.constraintlayout.widget.ConstraintLayout>
     </ScrollView>
 </androidx.constraintlayout.widget.ConstraintLayout>

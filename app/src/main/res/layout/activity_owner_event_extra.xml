@@ -1,0 +1,204 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+xmlns:app="http://schemas.android.com/apk/res-auto"
+xmlns:tools="http://schemas.android.com/tools"
+android:layout_width="match_parent"
+android:layout_height="match_parent"
+tools:context=".OwnerEventExtraActivity">
+
+<!-- ImageView covering 25% of the screen -->
+
+<!-- TextView for Event Name -->
+
+<!-- TextView for Address -->
+
+<!-- TextView for Time/Date -->
+
+<!-- Button to see who is going -->
+
+<!-- TextView for Event Description -->
+<androidx.constraintlayout.widget.ConstraintLayout
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <ImageView
+        android:id="@+id/headerImage"
+        android:layout_width="match_parent"
+        android:layout_height="250dp"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentEnd="true"
+        android:layout_weight="1"
+        android:scaleType="centerCrop"
+        android:src="@drawable/baseline_pictures_24"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/owner_EventInfoCard"
+        android:layout_width="390dp"
+        android:layout_height="wrap_content"
+        android:background="@drawable/rounded_card"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/headerImage"
+        android:layout_marginTop="5dp">
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+            <TextView
+                android:id="@+id/owner_eventNameTextView"
+                android:layout_width="380dp"
+                android:layout_height="wrap_content"
+                android:text="Event Name"
+                android:textSize="24dp"
+                android:textStyle="bold"
+                android:ellipsize="marquee"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                android:layout_marginTop="5dp"/>
+            <TextView
+                android:id="@+id/owner_startTimeTextView"
+                android:layout_width="380dp"
+                android:layout_height="wrap_content"
+                android:text="Event Time/Date"
+                android:textSize="16dp"
+                android:layout_marginTop="10dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/owner_eventNameTextView"/>
+
+
+            <TextView
+                android:id="@+id/owner_endTimeTextView"
+                android:layout_width="380dp"
+                android:layout_height="wrap_content"
+                android:text="Event Time/Date"
+                android:textSize="16dp"
+                android:layout_marginTop="5dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/owner_startTimeTextView" />
+
+            <TextView
+                android:id="@+id/owner_addressTextView"
+                android:layout_width="380dp"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="10dp"
+                android:text="Event Address"
+                android:textSize="16dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                android:layout_marginTop="15dp"
+                app:layout_constraintTop_toBottomOf="@+id/owner_endTimeTextView" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </com.google.android.material.card.MaterialCardView>
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/owner_EventDescriptionCard"
+        android:layout_width="390dp"
+        android:layout_height="150dp"
+        android:background="@drawable/rounded_card"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/owner_EventTagsCard"
+        android:layout_marginTop="5dp">
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <TextView
+                android:id="@+id/owner_descriptionTextView"
+                android:layout_width="380dp"
+                android:layout_height="wrap_content"
+                android:text="Event Description"
+                android:textSize="16dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                android:layout_marginTop="5dp"/>
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </com.google.android.material.card.MaterialCardView>
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/owner_EventTagsCard"
+        android:layout_width="390dp"
+        android:layout_height="wrap_content"
+        android:background="@drawable/rounded_card"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/owner_EventInfoCard"
+        android:layout_marginTop="5dp">
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="100dp">
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/owner_EventTagsRV"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Event Description"
+                android:textSize="16dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:listitem="@layout/tag_item"/>
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </com.google.android.material.card.MaterialCardView>
+    <Button
+        android:id="@+id/owner_see_who_is_going"
+        android:layout_width="390dp"
+        android:layout_height="50dp"
+        android:layout_marginTop="15dp"
+        android:text="SEE WHO IS GOING"
+        style="@style/EventCardActionButton"
+        android:backgroundTint="@color/InviteOthersButton"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/owner_EventDescriptionCard"
+        />
+
+    <!-- Green button to join event -->
+
+    <Button
+        android:id="@+id/owner_check_in_users"
+        android:layout_width="390dp"
+        android:layout_height="50dp"
+        android:layout_marginTop="15dp"
+        android:text="CHECK IN USERS"
+        android:textColor="@android:color/white"
+        style="@style/SlightRoundedCorners"
+        android:backgroundTint="@color/ImInButton"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/owner_see_who_is_going" />
+    <Button
+        android:id="@+id/owner_edit_event"
+        android:layout_width="390dp"
+        android:layout_height="50dp"
+        android:layout_marginTop="15dp"
+        android:text="EDIT EVENT"
+        android:textColor="@android:color/white"
+        style="@style/SlightRoundedCorners"
+        android:backgroundTint="@color/EditEventButton"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/owner_check_in_users" />
+    <Button
+        android:id="@+id/owner_cancel_event"
+        android:layout_width="390dp"
+        android:layout_height="50dp"
+        android:layout_marginTop="15dp"
+        android:text="CANCEL EVENT"
+        android:textColor="@android:color/white"
+        style="@style/SlightRoundedCorners"
+        android:backgroundTint="@color/RejectButton"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/owner_edit_event" />
+
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>
+</ScrollView>

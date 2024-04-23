@@ -1,8 +1,6 @@
 package com.example.partyapp
 
 import android.annotation.SuppressLint
-import android.app.DatePickerDialog
-import android.app.TimePickerDialog
 import android.content.ContentValues
 import android.content.Context
 import android.content.Intent
@@ -24,17 +22,14 @@ import android.widget.ImageView
 import android.widget.ScrollView
 import android.widget.TextView
 import android.widget.Toast
-import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
-import androidx.core.net.toUri
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.google.android.flexbox.FlexboxLayoutManager
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationCallback
 import com.google.android.gms.location.LocationRequest
@@ -55,7 +50,7 @@ import com.google.firebase.storage.FirebaseStorage
 import java.time.LocalDateTime
 
 private lateinit var auth: FirebaseAuth
-@RequiresApi(Build.VERSION_CODES.P)
+@RequiresApi(Build.VERSION_CODES.TIRAMISU)
 class AddEstablishmentActivity : AppCompatActivity(), OnMapReadyCallback {
 
     private var lat = 40.7357
@@ -64,8 +59,9 @@ class AddEstablishmentActivity : AppCompatActivity(), OnMapReadyCallback {
     private var locationManager : LocationManager? = null
     private val PERMISSION_ID = 44
     private val today = LocalDateTime.now()
-    private val blank = AddPictureRVEntryModel()
-    private val photosArray: MutableList<AddPictureRVEntryModel> = mutableListOf<AddPictureRVEntryModel>(blank)
+    private val blank = ImageModel()
+    private val photosArray: MutableList<ImageModel> = mutableListOf<ImageModel>(blank)
+    private val tagsArray: MutableList<TagModel> = mutableListOf<TagModel>()
     private val storageRef = FirebaseStorage.getInstance().reference.child("establishmentImages")
     private lateinit var photosAdapter: EntryPhotoAdapter
     private lateinit var mFusedLocationClient: FusedLocationProviderClient
@@ -77,9 +73,8 @@ class AddEstablishmentActivity : AppCompatActivity(), OnMapReadyCallback {
             for(image in uris) {
                 if(photosAdapter.itemCount <= 6){
                     photosArray.add(photosAdapter.itemCount-1,
-                        AddPictureRVEntryModel(
+                        ImageModel(
                             image,
-                            auth.currentUser!!.email,
                             auth.currentUser!!.email + image.toString()
                         )
                     )
@@ -113,36 +108,64 @@ class AddEstablishmentActivity : AppCompatActivity(), OnMapReadyCallback {
         photosRV.layoutManager = GridLayoutManager(this,3)
         photosRV.adapter = photosAdapter
 
+        val tagEntry = findViewById<EditText>(R.id.EstTagEntry)
+        val addTagButton = findViewById<Button>(R.id.EstAddTagButton)
+        val tagsRV = findViewById<RecyclerView>(R.id.estTagsRecyclerView)
+        val tagsAdapter = TagsAdapter(true, tagsArray)
+        tagsRV.layoutManager = FlexboxLayoutManager(this)
+        tagsRV.adapter = tagsAdapter
+
+        addTagButton.setOnClickListener{
+            if(tagEntry.text.toString() != ""){
+                val tag = TagModel(text = tagEntry.text.toString())
+                tagsArray.add(tag)
+                tagsAdapter.notifyItemInserted(tagsAdapter.itemCount-1)
+                tagEntry.setText("")
+            }
+        }
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
-        getLastLocation()
         val mapF =findViewById<View>(R.id.mapOverlay)
         val mainScrollView = findViewById<ScrollView>(R.id.addEstablishmentScrollView)
         val establishmentDescription = findViewById<EditText>(R.id.EstablishmentDescEntry)
         val establishmentName = findViewById<TextView>(R.id.EstablishmentNameEntry)
         val submitButton = findViewById<Button>(R.id.EstablishmentSubmitButton)
         submitButton.setOnClickListener {
-            val myRef = database.getReference("Establishments")
+            val myRef = database.getReference("TaggedEstablishments")
+            val pushRef = myRef.child(auth.currentUser!!.uid).push()
             val name = establishmentName.text.toString()
             val desc = establishmentDescription.text.toString()
             val photoList = mutableListOf<String>()
-            for(entry in photosArray){
-                if(entry.image.toString() != "null") {
-                    photoList.add(entry.image.toString())
-                }
-
-            }
-            val establishment = EstablishmentModel(auth.currentUser!!.uid, lat, long, name, desc,
-                photoList
-            )
-            myRef.child(auth.currentUser!!.uid).child(name).setValue(establishment).addOnSuccessListener {
-                Log.d(ContentValues.TAG, ":D")
-            }
+            val tagsList = mutableListOf<String>()
+            val sanTagsList = mutableListOf<String>()
+            val geoHelper = GeoHelper(this)
+            val address = geoHelper.getAddress(lat,long)
             auth.currentUser?.let {
-                for(photo in photoList){
-                    storageRef.child(photo.toString().replace('/','_')).putFile(photo.toUri()).addOnSuccessListener {
-                        Log.d("Update: ", "Uploaded Establishment Photos")
+                var i = 0
+                for(photo in photosArray){
+                    photosArray[i].image?.let { it1 ->
+                        photoList.add(pushRef.key!!+ i.toString())
+                        storageRef.child(photoList[i]).putFile(it1).addOnSuccessListener {
+                            Log.d("Update: ", "Uploaded Event Photos")
+                        }
                     }
+                    i+=1
                 }
+            }
+            for(entry in tagsArray){
+                var tagText = entry.text!!
+                tagsList.add(tagText)
+                tagText = tagText.lowercase()
+                val re = Regex("[^A-Za-z0-9 ]")
+                tagText = re.replace(tagText, "")
+                sanTagsList.add(tagText)
+            }
+            val establishment = EstablishmentModel(pushRef.key, auth.currentUser!!.uid, lat, long, name, desc, address,
+                photoList,
+                tagsList,
+                sanTagsList
+            )
+            pushRef.setValue(establishment).addOnSuccessListener {
+                Log.d(ContentValues.TAG, ":D")
             }
             startActivity(Intent(this@AddEstablishmentActivity, MainActivity::class.java))
             finish()
@@ -173,7 +196,7 @@ class AddEstablishmentActivity : AppCompatActivity(), OnMapReadyCallback {
     override fun onMapReady(googleMap: GoogleMap) {
 
         // method to get the location
-        getLastLocation()
+        getLastLocation(googleMap)
         val location = LatLng(lat, long)
         Log.i("testdata","lat: ${long}")
         Log.i("testdata","lat: ${lat}")
@@ -187,16 +210,18 @@ class AddEstablishmentActivity : AppCompatActivity(), OnMapReadyCallback {
             googleMap.clear()
             val markerOptions = MarkerOptions()
             markerOptions.position(it)
-            markerOptions.title("Party Here")
+            markerOptions.title("Establishment Here")
             markerOptions.snippet("Snippet")
             markerOptions.visible(true)
             googleMap.addMarker(
                 markerOptions
             )
+            lat = it.latitude
+            long = it.longitude
         }
     }
     @SuppressLint("MissingPermission")
-    private fun getLastLocation(){
+    private fun getLastLocation(googleMap: GoogleMap){
         // check if permissions are given
         if (checkPermissions()) {
 
@@ -212,8 +237,14 @@ class AddEstablishmentActivity : AppCompatActivity(), OnMapReadyCallback {
                     if (location == null) {
                         requestNewLocationData()
                     } else {
-                        lat = location.getLatitude()
-                        long = location.getLongitude()
+                        googleMap.clear()
+                        val loca =  LatLng(location.getLatitude(), location.getLongitude())
+                        googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(loca, 12F))
+                        googleMap.addMarker(
+                            MarkerOptions()
+                                .position(loca)
+                                .title("Newark")
+                        )
                     }
                 })
             } else {
@@ -227,7 +258,7 @@ class AddEstablishmentActivity : AppCompatActivity(), OnMapReadyCallback {
             // request for permissions
             requestPermissions()
             if(checkPermissions()){
-                getLastLocation()
+                getLastLocation(googleMap)
             }
         }
     }
@@ -283,34 +314,20 @@ class AddEstablishmentActivity : AppCompatActivity(), OnMapReadyCallback {
         return locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER) || locationManager.isProviderEnabled(
             LocationManager.NETWORK_PROVIDER
         )
-    }/*
-    @Override
-    override fun onRequestPermissionsResult(
-        requestCode: Int,
-        permissions: Array<String?>,
-        grantResults: IntArray
-    ) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        if (requestCode == PERMISSION_ID) {
-            if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                getLastLocation()
-            }
-        }
-    }*/
+    }
     override fun onResume() {
         super.onResume()
         if (checkPermissions()) {
-            getLastLocation()
         }
     }
     inner class EntryPhotoAdapter
         (
         private val context: Context,
-        private val entries: MutableList<AddPictureRVEntryModel>,
+        private val entries: MutableList<ImageModel>,
     ): RecyclerView.Adapter<EntryPhotoAdapter.EntryViewHolder>() {
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): EntryViewHolder {
             val view = LayoutInflater.from(parent.context)
-                .inflate(R.layout.rv_listing_image_item, parent, false)
+                .inflate(R.layout.add_image_item, parent, false)
             return EntryViewHolder(view)
         }
 
@@ -380,8 +397,8 @@ class AddEstablishmentActivity : AppCompatActivity(), OnMapReadyCallback {
 
 
         inner class EntryViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView), View.OnClickListener {
-            var item: AddPictureRVEntryModel? = null
-            val photo: ImageView = itemView.findViewById(R.id.photo)
+            var item: ImageModel? = null
+            val photo: ImageView = itemView.findViewById(R.id.addedPhoto)
             val plus: ImageView = itemView.findViewById(R.id.addPhotoIcon)
 
             init {

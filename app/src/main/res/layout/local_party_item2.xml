@@ -46,8 +46,6 @@
                 android:layout_height="wrap_content"
                 android:orientation="horizontal">
 
-                <!-- Placeholder for user images -->
-                <!-- Add ImageView for each user image here -->
             </LinearLayout>
         </HorizontalScrollView>
 

@@ -16,17 +16,18 @@
         android:contentDescription="@string/logo_description" />
 
     <TextView
+        android:id="@+id/nameTV"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Name: John Smith"
         android:fontFamily="@font/josefin_sans_medium"
         android:textSize="20sp"
-        app:layout_constraintBottom_toTopOf="@+id/textView"
+        app:layout_constraintBottom_toTopOf="@+id/emailTV"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 
     <TextView
-        android:id="@+id/textView"
+        android:id="@+id/emailTV"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:fontFamily="@font/josefin_sans_medium"
