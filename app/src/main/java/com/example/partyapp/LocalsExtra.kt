@@ -166,6 +166,7 @@ class LocalsExtra : AppCompatActivity(), OnMapReadyCallback {
                 val uid = uidSnapshot.key
                 if( uid == userID){
                     joinButton.visibility = View.GONE
+                    reveiewButton.visibility = View.VISIBLE
                     viewQrCardButton.visibility = View.VISIBLE
                 }
             }
