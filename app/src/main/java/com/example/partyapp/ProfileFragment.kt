@@ -12,8 +12,10 @@ import com.example.partyapp.databinding.FragmentProfileBinding
 import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.auth
+import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.getValue
 
-@RequiresApi(Build.VERSION_CODES.O)
+@RequiresApi(Build.VERSION_CODES.TIRAMISU)
 class ProfileFragment : Fragment(){
     private lateinit var auth: FirebaseAuth
 
@@ -33,10 +35,18 @@ class ProfileFragment : Fragment(){
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         auth = Firebase.auth
+        val databaseRef = FirebaseDatabase.getInstance().getReference("Users")
 
         with(binding) {
             logoutButton.setOnClickListener {
                signOut()
+            }
+            databaseRef.child(auth.currentUser!!.uid).get().addOnSuccessListener {
+                val user = it.getValue(UserModel::class.java)
+                if(user != null){
+                    nameTV.text = "Name: "+ user.firstName + " " + user.lastName
+                    emailTV.text = "Email: "+ user.email
+                }
             }
         }
     }

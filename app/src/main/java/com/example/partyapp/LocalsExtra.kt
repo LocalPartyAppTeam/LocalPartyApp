@@ -3,6 +3,7 @@ package com.example.partyapp
 import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.Color
+import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.view.View
@@ -11,6 +12,7 @@ import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
+import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -36,7 +38,10 @@ import com.google.firebase.storage.FirebaseStorage
 import com.google.zxing.BarcodeFormat
 import com.google.zxing.MultiFormatWriter
 import com.google.zxing.qrcode.QRCodeWriter
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 
+@RequiresApi(Build.VERSION_CODES.O)
 class LocalsExtra : AppCompatActivity(), OnMapReadyCallback {
     private lateinit var auth: FirebaseAuth
     private var lat: Double = 0.0
@@ -51,8 +56,8 @@ class LocalsExtra : AppCompatActivity(), OnMapReadyCallback {
         eventName = event.name!!
         val host = event.host!!
         val address = event.address!!
-        val start = event.start!!
-        val end = event.end!!
+        val start = LocalDateTime.parse(event.start!!).format(DateTimeFormatter.ofPattern("dd MMMM yyyy HH:mma"))
+        val end = LocalDateTime.parse(event.end!!).format(DateTimeFormatter.ofPattern("dd MMMM yyyy HH:mma"))
         val desc = event.desc!!
         val userID = auth.currentUser!!.uid
         lat = event.lat!!

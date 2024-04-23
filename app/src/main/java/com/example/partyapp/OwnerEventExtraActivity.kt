@@ -1,11 +1,13 @@
 package com.example.partyapp
 
 import android.content.Intent
+import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
@@ -15,7 +17,10 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.FirebaseStorage
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 
+@RequiresApi(Build.VERSION_CODES.O)
 class OwnerEventExtraActivity : AppCompatActivity() {
     private lateinit var auth: FirebaseAuth
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -26,8 +31,8 @@ class OwnerEventExtraActivity : AppCompatActivity() {
         val eventName = event!!.name
         val host = event.host
         val address = event.address
-        val start = event.start
-        val end = event.end
+        val start = LocalDateTime.parse(event.start!!).format(DateTimeFormatter.ofPattern("dd MMMM yyyy hh:mma"))
+        val end = LocalDateTime.parse(event.end!!).format(DateTimeFormatter.ofPattern("dd MMMM yyyy hh:mma"))
         val desc = event.desc
         val lat = event.lat
         val long = event.long

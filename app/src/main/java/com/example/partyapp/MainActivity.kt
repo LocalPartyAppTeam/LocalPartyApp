@@ -43,6 +43,7 @@ class MainActivity : AppCompatActivity() {
                     replaceFragment(fragment)
                     true
                 }
+                replaceFragment(LoginFragment())
             }
             else -> {
                 this.findViewById<BottomNavigationView?>(R.id.bottom_navigation_logged_out).visibility = View.GONE
@@ -59,8 +60,9 @@ class MainActivity : AppCompatActivity() {
                     replaceFragment(fragment)
                     true
                 }
+                bottomNavigationBar.selectedItemId = R.id.profileBN
+                replaceFragment(ProfileFragment())
             }
         }
-        replaceFragment(LoginFragment())
     }
 }
