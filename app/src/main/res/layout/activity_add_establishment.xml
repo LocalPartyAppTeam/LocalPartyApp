@@ -37,13 +37,14 @@
           android:id="@+id/EstablishmentNameEntry"
           android:layout_width="190dp"
           android:layout_height="30dp"
-          android:singleLine="true"
-          android:paddingHorizontal="10dp"
+          android:layout_marginStart="15dp"
+          android:layout_marginTop="19dp"
           android:background="@drawable/rounded_text_entry"
+          android:paddingHorizontal="10dp"
+          android:singleLine="true"
           android:textColor="@color/white"
           android:textSize="20dp"
-          android:layout_marginTop="19dp"
-          android:layout_marginStart="15dp"
+          app:layout_constraintEnd_toEndOf="@+id/EstablishmentDescEntry"
           app:layout_constraintStart_toEndOf="@id/EstablishmentNameStatic"
           app:layout_constraintTop_toTopOf="parent" />
 
@@ -65,16 +66,16 @@
           android:id="@+id/EstablishmentDescEntry"
           android:layout_width="375dp"
           android:layout_height="375dp"
-          android:paddingHorizontal="10dp"
-          android:isScrollContainer="true"
+          android:layout_marginTop="15dp"
+          android:background="@drawable/rounded_text_entry"
           android:gravity="top"
+          android:isScrollContainer="true"
+          android:paddingHorizontal="10dp"
           android:textColor="@color/white"
           android:textSize="22dp"
-          android:background="@drawable/rounded_text_entry"
-          app:layout_constraintTop_toBottomOf="@id/EstablishmentDescStatic"
-          android:layout_marginTop="15dp"
           app:layout_constraintEnd_toEndOf="parent"
-          app:layout_constraintStart_toStartOf="parent" />
+          app:layout_constraintStart_toStartOf="parent"
+          app:layout_constraintTop_toBottomOf="@id/EstablishmentDescStatic" />
 
       <TextView
           android:id="@+id/LocationStatic"
