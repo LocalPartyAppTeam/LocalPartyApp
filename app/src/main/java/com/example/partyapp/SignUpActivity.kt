@@ -1,22 +1,28 @@
 package com.example.partyapp
 
+import android.app.DatePickerDialog
 import android.content.Intent
+import android.os.Build
 import android.os.Bundle
+import android.text.InputType
 import android.text.TextUtils
 import android.util.Log
-import android.widget.Button
 import android.widget.Toast
+import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import com.example.partyapp.databinding.ActivitySignupBinding
-import com.google.android.gms.common.SignInButton
 import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.auth
+import com.google.firebase.database.DatabaseReference
+import com.google.firebase.database.database
+import java.util.Calendar
 
 private const val TAG = "EmailPassword"
 
 class SignUpActivity : AppCompatActivity() {
     private lateinit var auth: FirebaseAuth
+    private lateinit var database: DatabaseReference
 
     private lateinit var binding: ActivitySignupBinding
 
@@ -25,9 +31,18 @@ class SignUpActivity : AppCompatActivity() {
         binding = ActivitySignupBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        val signUpButton: Button = findViewById(R.id.signUpButton)
+        database = Firebase.database.reference
 //        val googleSignUpButton: SignInButton = findViewById(R.id.signInButton)
 
+        binding.fieldTextDob.inputType = InputType.TYPE_NULL;
+        binding.fieldTextDob.setOnClickListener {
+            calendar()
+        }
+        binding.fieldTextDob.setOnFocusChangeListener { _, _ ->
+            calendar()
+        }
+
+        val signUpButton = binding.signUpButton
         signUpButton.setOnClickListener {
             val email = binding.fieldTextEmailAddress.text.toString()
             val password = binding.fieldTextPassword.text.toString()
@@ -48,6 +63,10 @@ class SignUpActivity : AppCompatActivity() {
                 if (task.isSuccessful) {
                     // Sign in success, update UI with the signed-in user's information
                     Log.d(TAG, "createUserWithEmail:success")
+                    val firstName = binding.fieldTextName.text.toString()
+                    val lastName = binding.fieldTextLastName.text.toString()
+                    val dateOfBirth = binding.fieldTextDob.text.toString()
+                    auth.currentUser?.let { writeAccount(it.uid, firstName, lastName, dateOfBirth) }
                     updateUI()
                 } else {
                     // If sign in fails, display a message to the user.
@@ -59,6 +78,8 @@ class SignUpActivity : AppCompatActivity() {
                     ).show()
                 }
             }
+
+
     }
 
     private fun validateForm(): Boolean {
@@ -98,7 +119,41 @@ class SignUpActivity : AppCompatActivity() {
             binding.fieldTextConfirmPassword.error = null
         }
 
+        val dob = binding.fieldTextDob.text.toString()
+        if (TextUtils.isEmpty(dob)) {
+            binding.fieldTextDob.error = "Required."
+            valid = false
+        } else {
+            binding.fieldTextDob.error = null
+        }
+
         return valid
+    }
+
+    private fun calendar() {
+        val c = Calendar.getInstance()
+
+        val year = c.get(Calendar.YEAR)
+        val month = c.get(Calendar.MONTH)
+        val day = c.get(Calendar.DAY_OF_MONTH)
+
+        val datePickerDialog = DatePickerDialog(
+            this,
+            { _, year, monthOfYear, dayOfMonth ->
+                binding.fieldTextDob.setText(dayOfMonth.toString() + "/" + (monthOfYear + 1) + "/" + year)
+            },
+            year,
+            month,
+            day
+        )
+        datePickerDialog.show()
+    }
+
+    private fun writeAccount(uid: String, firstName: String, lastName: String, dob: String, ) {
+        database.child("Users").child(uid).setValue(uid)
+        database.child("Users").child(uid).child("firstName").setValue(firstName)
+        database.child("Users").child(uid).child("lastName").setValue(lastName)
+        database.child("Users").child(uid).child("dob").setValue(dob)
     }
 
     private fun updateUI() {
