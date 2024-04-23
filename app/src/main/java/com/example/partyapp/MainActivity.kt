@@ -12,7 +12,7 @@ import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 
 
-@RequiresApi(Build.VERSION_CODES.P)
+@RequiresApi(Build.VERSION_CODES.TIRAMISU)
 class MainActivity : AppCompatActivity() {
 
     private fun replaceFragment(fragment: Fragment) {
@@ -38,8 +38,6 @@ class MainActivity : AppCompatActivity() {
                 bottomNavigationBar.setOnItemSelectedListener { item ->
                     lateinit var fragment: Fragment
                     when (item.itemId) {
-                        R.id.eventsBN -> fragment = LoginFragment()
-                        R.id.localsBN -> fragment = LoginFragment()
                         R.id.profileBN -> fragment = LoginFragment()
                     }
                     replaceFragment(fragment)
@@ -63,6 +61,6 @@ class MainActivity : AppCompatActivity() {
                 }
             }
         }
-        replaceFragment(ProfileFragment())
+        replaceFragment(LoginFragment())
     }
 }
