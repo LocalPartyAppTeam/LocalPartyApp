@@ -16,15 +16,21 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.auth
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.database
+import java.time.LocalDateTime
+import java.time.Period
 import java.util.Calendar
 
 private const val TAG = "EmailPassword"
 
+@RequiresApi(Build.VERSION_CODES.TIRAMISU)
 class SignUpActivity : AppCompatActivity() {
     private lateinit var auth: FirebaseAuth
     private lateinit var database: DatabaseReference
 
     private lateinit var binding: ActivitySignupBinding
+    var y = 0
+    var m = 0
+    var d = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -140,6 +146,9 @@ class SignUpActivity : AppCompatActivity() {
         val datePickerDialog = DatePickerDialog(
             this,
             { _, year, monthOfYear, dayOfMonth ->
+                y = year
+                m = monthOfYear
+                d = dayOfMonth
                 binding.fieldTextDob.setText(dayOfMonth.toString() + "/" + (monthOfYear + 1) + "/" + year)
             },
             year,
@@ -150,10 +159,9 @@ class SignUpActivity : AppCompatActivity() {
     }
 
     private fun writeAccount(uid: String, firstName: String, lastName: String, dob: String, ) {
-        database.child("Users").child(uid).setValue(uid)
-        database.child("Users").child(uid).child("firstName").setValue(firstName)
-        database.child("Users").child(uid).child("lastName").setValue(lastName)
-        database.child("Users").child(uid).child("dob").setValue(dob)
+        val age = Period.between(LocalDateTime.of(y,m+1,d,0,0).toLocalDate(), LocalDateTime.now().toLocalDate()).years
+        val user = UserModel(firstName,lastName,dob,auth.currentUser!!.email,"@"+firstName+lastName+uid.substring(0,3),uid,age)
+        database.child("Users").child(uid).setValue(user)
     }
 
     private fun updateUI() {
