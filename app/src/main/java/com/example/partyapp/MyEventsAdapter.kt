@@ -12,6 +12,7 @@ import androidx.annotation.RequiresApi
 import androidx.core.os.persistableBundleOf
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.google.firebase.database.FirebaseDatabase
 import java.time.LocalDateTime
 
 @RequiresApi(Build.VERSION_CODES.O)
@@ -21,10 +22,12 @@ class MyEventsAdapter(private val context: Context,
                       private val eventList: List<EventModel>,
                       private val owner: Boolean ):
     RecyclerView.Adapter<MyEventsAdapter.ViewHolder>() {
+    val databaseRef = FirebaseDatabase.getInstance().getReference("Users")
     inner class ViewHolder(itemView: View): RecyclerView.ViewHolder(itemView) {
 
         val eventNameHost: TextView = itemView.findViewById(R.id.MECH_host)
         val eventTitle: TextView = itemView.findViewById(R.id.MECHTitle)
+        val eventDesc: TextView = itemView.findViewById(R.id.MECIDescription)
         val eventNumberPhotos: TextView = itemView.findViewById(R.id.MECIPhotoCount)
         val eventAddressDistance : TextView = itemView.findViewById(R.id.text_event_address_distance)
         val eventTagsRV : RecyclerView = itemView.findViewById(R.id.myEventItemTagsRV)
@@ -75,15 +78,23 @@ class MyEventsAdapter(private val context: Context,
         holder.eventTagsRV.layoutManager = LinearLayoutManager(context, RecyclerView.HORIZONTAL, false)
         val eventTagsAdapter = TagsAdapter(false,eventTagsList)
         holder.eventTagsRV.adapter = eventTagsAdapter
-        holder.eventNameHost.text =  currentEvent.host//currentItem.eventName + " (" + currentItem.distance + ")" // + " hosted by " + currentItem.host
+        databaseRef.child(currentEvent.host!!).get().addOnSuccessListener {
+            holder.eventNameHost.text = it.getValue(UserModel::class.java)?.username ?: "unknown"
+        }
         if(currentEvent.tags != null){
             for(tag in currentEvent.tags!!){
                 eventTagsList.add(TagModel(text=tag))
                 eventTagsAdapter.notifyItemInserted(eventTagsAdapter.itemCount)
             }
         }
+        holder.eventDesc.text =  currentEvent.desc
         holder.eventAddressDistance.text = geo.calculateDistance(userLocation[0], userLocation[1], currentEvent.lat!!,currentEvent.long!!).toString()+" mi"//  + " (" + currentItem.distance + ")"
         holder.eventTitle.text = currentEvent.name
-        holder.eventNumberPhotos.text = (currentEvent.imgPaths?.size.toString() + " PHOTO(S)")
+
+        if(currentEvent.imgPaths.isNullOrEmpty()){
+            holder.eventNumberPhotos.text = "0 PHOTO(S)"
+        }else{
+            holder.eventNumberPhotos.text = (currentEvent.imgPaths!!.size.toString() + " PHOTO(S)")
+        }
     }
 }

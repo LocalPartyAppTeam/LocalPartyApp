@@ -29,6 +29,7 @@ class LocalsAdapter(private val context: Context, private val userLocation: Arra
 //        val dayOfMonth: TextView = itemView.findViewById(R.id.text_day_of_month)
         val eventNameHost: TextView = itemView.findViewById(R.id.LECH_host)
         val eventTitle: TextView = itemView.findViewById(R.id.LECHTitle)
+        val eventDesc: TextView = itemView.findViewById(R.id.LECIDescription)
         val eventNumberPhotos:TextView = itemView.findViewById(R.id.LECIPhotoCount)
         val eventAddressDistance : TextView = itemView.findViewById(R.id.text_event_address_distance)
         val eventTagsRV : RecyclerView = itemView.findViewById(R.id.eventItemTagsRV)
@@ -78,6 +79,7 @@ class LocalsAdapter(private val context: Context, private val userLocation: Arra
 //        holder.eventAddressDistance.text = currentItem.address//  + " (" + currentItem.distance + ")"
         holder.eventAddressDistance.text = geo.calculateDistance(userLocation[0], userLocation[1], currentItem.lat!!,currentItem.long!!).toString()+" mi"//  + " (" + currentItem.distance + ")"
         holder.eventTitle.text = currentItem.name
+        holder.eventDesc.text = currentItem.desc
         if(currentItem.imgPaths.isNullOrEmpty()){
             holder.eventNumberPhotos.text = "0 PHOTO(S)"
         }else{
