@@ -7,6 +7,7 @@ import android.util.Log
 import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
+import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.RecyclerView
@@ -15,6 +16,11 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.google.android.flexbox.FlexboxLayoutManager
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.DatabaseReference
+import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.ValueEventListener
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.FirebaseStorage
 import java.time.LocalDateTime
@@ -24,7 +30,9 @@ import java.time.format.DateTimeFormatter
 class OwnerEventExtraActivity : AppCompatActivity() {
     private lateinit var auth: FirebaseAuth
     override fun onCreate(savedInstanceState: Bundle?) {
+        val taggedEvents: DatabaseReference = FirebaseDatabase.getInstance().reference.child("TaggedEvents")
         auth = Firebase.auth
+        val currUser = auth.currentUser!!.uid
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_owner_event_extra)
         val event = intent.getParcelableExtra<EventModel>("event")
@@ -75,6 +83,37 @@ class OwnerEventExtraActivity : AppCompatActivity() {
                 putExtra("pushId",event.pushId)
             }
             this.startActivity(intent)
+        }
+
+        cancelEventButton.setOnClickListener {
+
+            taggedEvents.addListenerForSingleValueEvent(object:
+                ValueEventListener {
+                override fun onDataChange(snapshot: DataSnapshot) {
+                    for(childSnapshot in snapshot.children){
+                        val userID: String = childSnapshot.key!!
+                        if(userID == currUser){
+//                            Toast.makeText(this,"delete this one (TaggedEvents) " + userID,Toast.LENGTH_LONG).show()
+
+                                        taggedEvents.child(userID).removeValue()
+                                            .addOnSuccessListener {
+//                                                Toast.makeText(context, "User deleted: $userID", Toast.LENGTH_SHORT).show()
+                                            }
+                                            .addOnFailureListener { e ->
+//                                                Toast.makeText(context, "Failed to delete user: $userID", Toast.LENGTH_SHORT).show()
+                                                Log.e("Firebase", "Failed to delete user: $userID", e)
+                                            }
+                                        break
+                        }
+
+                    }
+
+                }
+
+                override fun onCancelled(error: DatabaseError) {
+                    TODO("Not yet implemented")
+                }
+            })
         }
 
 
