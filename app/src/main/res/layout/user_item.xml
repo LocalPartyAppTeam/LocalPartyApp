@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="60dp"
+    android:id="@+id/userItem">
+
+    <ImageView
+        android:id="@+id/userPicture"
+        android:src="@drawable/profile_24"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:contentDescription="@string/profile_picture_cont_desc"/>
+
+    <TextView
+        android:id="@+id/userFullName"
+        android:text="@string/user_full_name_example"
+        android:ellipsize="marquee"
+        android:layout_width="140dp"
+        android:layout_height="20dp"
+        app:layout_constraintStart_toEndOf="@+id/userPicture"
+        app:layout_constraintTop_toTopOf="@+id/userPicture" />
+
+    <TextView
+        android:id="@+id/username"
+        android:layout_width="100dp"
+        android:layout_height="20dp"
+        android:text="@string/username_example"
+        app:layout_constraintStart_toEndOf="@+id/userPicture"
+        app:layout_constraintTop_toBottomOf="@+id/userFullName" />
+
+    <TextView
+        android:id="@+id/age"
+        android:layout_width="25dp"
+        android:layout_height="20dp"
+        android:text="@string/age_example"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/userFullName"
+        android:layout_marginEnd="15dp"/>
+
+    <ImageView
+        android:id="@+id/userVerified"
+        android:src="@drawable/baseline_check_circle_outline_24"
+        android:layout_width="20dp"
+        android:layout_height="20dp"
+        android:layout_marginEnd="5dp"
+        app:layout_constraintEnd_toStartOf="@+id/age"
+        app:layout_constraintTop_toTopOf="@+id/age"
+        android:contentDescription="@string/id_verified_tick"/>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

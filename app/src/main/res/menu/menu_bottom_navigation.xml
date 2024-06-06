@@ -15,7 +15,7 @@
         android:id="@+id/localsBN"
         android:enabled="true"
         android:icon="@drawable/locals_24"
-        android:title="@string/localsBNT"/>
+        android:title="@string/localsBNT" />
     <item
         android:id="@+id/profileBN"
         android:enabled="true"

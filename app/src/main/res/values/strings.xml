@@ -1,4 +1,8 @@
 <resources>
+    <string-array name="sort_options">
+        <item>Sort by Distance</item>
+        <item>Sort by Attendees</item>
+    </string-array>
     <string name="app_name">Festiv</string>
     <string name="invitationsBNT">Invitations</string>
     <string name="eventsBNT">Events</string>
@@ -29,4 +33,19 @@
     <string name="confirm_password">Confirm Password</string>
     <string name="logout">Logout</string>
     <string name="logo_description">Firework Clipart</string>
+    <string name="title_activity_add_establishment">title_activity_activity_add_establishment\n</string>
+    <string name="lorem_ipsum">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Turpis massa sed elementum tempus. Bibendum enim facilisis gravida neque convallis a cras semper. Orci eu lobortis elementum nibh tellus molestie nunc non blandit. Lacus luctus accumsan tortor posuere ac ut. Ornare arcu dui vivamus arcu felis bibendum ut. Ut placerat orci nulla pellentesque dignissim enim. Enim tortor at auctor urna nunc id cursus metus aliquam. Praesent tristique magna sit amet purus. Eu turpis egestas pretium aenean pharetra magna ac placerat vestibulum. Cursus in hac habitasse platea. Sapien et ligula ullamcorper malesuada. Vel quam elementum pulvinar etiam non quam. Nisi est sit amet facilisis magna etiam tempor orci eu. Massa massa ultricies mi quis hendrerit dolor magna eget est. Cras ornare arcu dui vivamus arcu felis bibendum. Penatibus et magnis dis parturient montes. Turpis nunc eget lorem dolor sed viverra ipsum nunc. Dui accumsan sit amet nulla facilisi morbi tempus iaculis urna. Etiam dignissim diam quis enim lobortis scelerisque fermentum. Lobortis feugiat vivamus at augue eget arcu dictum. Augue interdum velit euismod in pellentesque massa placerat duis. Ante in nibh mauris cursus mattis molestie. Amet tellus cras adipiscing enim eu turpis egestas. Adipiscing vitae proin sagittis nisl rhoncus mattis. Pellentesque massa placerat duis ultricies lacus sed turpis.</string>
+    <string name="title_activity_owner_event_extra">OwnerEventExtraActivity</string>
+    <string name="profile_picture_cont_desc">Profile Picture</string>
+    <string name="age_example">22</string>
+    <string name="username_example">\@okyereB</string>
+    <string name="user_full_name_example">Okyere Boateng</string>
+    <string name="id_verified_tick">verified tick</string>
+    <string name="todo">event poster</string>
+    <string name="rate_event">Rate the event:</string>
+    <string name="tell_us">Tell us more about your experience.</string>
+    <string name="rate_safety">Rate safety:</string>
+    <string name="tell_us_safety">Tell us about how safe you felt.</string>
+    <string name="submit">Submit</string>
+    <string name="date_of_birth">Date of birth</string>
 </resources>
