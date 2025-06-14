@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <style name="EventCardHeader" parent="@style/Widget.MaterialComponents.CardView">
+        <item name="shapeAppearanceOverlay">@style/RoundedTopCornersOnly</item>
+        <item name ="android:backgroundTint">@color/EventHeaderCard</item>
+    </style>
+    <style name="RoundedTopCornersOnly" parent="">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSizeTopRight">25dp</item>
+        <item name="cornerSizeTopLeft">25dp</item>
+        <item name="cornerSizeBottomRight">0dp</item>
+        <item name="cornerSizeBottomLeft">0dp</item>
+    </style>
+    <style name="Rounded" parent="">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSizeTopRight">25dp</item>
+        <item name="cornerSizeTopLeft">25dp</item>
+        <item name="cornerSizeBottomRight">25dp</item>
+        <item name="cornerSizeBottomLeft">25dp</item>
+    </style>
+    <style name="EventCardInfo" parent="@style/Widget.MaterialComponents.CardView">
+        <item name="shapeAppearanceOverlay">@style/RoundedBottomCornersOnly</item>
+        <item name ="android:backgroundTint">@color/EventInfoCard</item>
+    </style>
+    <style name="RoundedBottomCornersOnly" parent="">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSizeTopRight">0dp</item>
+        <item name="cornerSizeTopLeft">0dp</item>
+        <item name="cornerSizeBottomRight">25dp</item>
+        <item name="cornerSizeBottomLeft">25dp</item>
+    </style>
+
+    <style name="BasicTextEntry" parent="">
+    </style>
+
+    <style name="EventCardHeaderTitle" parent="@style/Widget.AppCompat.TextView">
+        <item name="android:ellipsize">marquee</item>
+        <item name="android:fontFamily">"@font/inter"</item>
+        <item name="android:lines">1</item>
+        <item name="android:textColor">@color/EventHeaderTitleText</item>
+        <item name="android:textFontWeight" tools:targetApi="p">1000</item>
+    </style>
+
+    <style name="EventCardHeaderDistance" parent="@style/Widget.AppCompat.TextView">
+        <item name="android:ellipsize">marquee</item>
+        <item name="android:fontFamily">"@font/inter"</item>
+        <item name="android:lines">1</item>
+        <item name="android:textColor">@color/EventHeaderDistanceText</item>
+        <item name="android:textAlignment">textEnd</item>
+        <item name="android:textFontWeight" tools:targetApi="p">1000</item>
+    </style>
+
+    <style name="EventCardHeaderHostStatic" parent="@style/Widget.AppCompat.TextView">
+        <item name="android:fontFamily">"@font/inter"</item>
+        <item name="android:textColor">@color/HostsText</item>
+        <item name="android:textFontWeight" tools:targetApi="p">850</item>
+    </style>
+
+    <style name="EventCardHeaderHostNames" parent="@style/Widget.AppCompat.TextView">
+        <item name="android:ellipsize">marquee</item>
+        <item name="android:fontFamily">"@font/inter"</item>
+        <item name="android:lines">1</item>
+        <item name="android:textColor">@color/HostsText</item>
+        <item name="android:textFontWeight" tools:targetApi="p">950</item>
+    </style>
+
+    <style name="EventCardInfoDescription" parent="@style/Widget.AppCompat.TextView">
+        <item name="android:ellipsize">end</item>
+        <item name="android:fontFamily">"@font/inter"</item>
+        <item name="android:lines">7</item>
+        <item name="android:textColor">@color/EventInfoText</item>
+        <item name="android:textFontWeight" tools:targetApi="p">600</item>
+    </style>
+
+    <style name="EventCardInfoPhotoCount" parent="@style/Widget.AppCompat.TextView">
+        <item name="android:fontFamily">"@font/inter"</item>
+        <item name="android:textColor">@color/black</item>
+        <item name="android:textFontWeight" tools:targetApi="p">1000</item>
+    </style>
+
+    <style name="EventCardActionButton" parent="@style/Widget.Material3.Button">
+        <item name="android:insetTop">0dp</item>
+        <item name="android:insetBottom">0dp</item>
+        <item name="android:minHeight">0dp</item>
+        <item name="android:fontFamily">"@font/inter"</item>
+        <item name="android:textColor">@color/white</item>
+        <item name="android:textFontWeight" tools:targetApi="p">1000</item>
+    </style>
+
+    <style name="SlightRoundedCorners" parent="@style/Widget.Material3.Button">
+        <item name="cornerSizeTopRight">0dp</item>
+        <item name="cornerSizeTopLeft">12dp</item>
+        <item name="cornerSizeBottomRight">12dp</item>
+        <item name="cornerSizeBottomLeft">12dp</item>
+        <item name="android:insetTop">0dp</item>
+        <item name="android:insetBottom">0dp</item>
+        <item name="android:fontFamily">"@font/inter"</item>
+        <item name="android:textColor">@color/white</item>
+        <item name="android:textFontWeight" tools:targetApi="p">1000</item>
+    </style>
+    <style name="SlightRoundedCornersTV">
+        <item name="cornerSizeTopRight">0dp</item>
+        <item name="cornerSizeTopLeft">12dp</item>
+        <item name="cornerSizeBottomRight">12dp</item>
+        <item name="cornerSizeBottomLeft">12dp</item>
+        <item name="android:insetTop">0dp</item>
+        <item name="android:insetBottom">0dp</item>
+        <item name="android:fontFamily">"@font/inter"</item>
+        <item name="android:textColor">@color/white</item>
+        <item name="android:textFontWeight" tools:targetApi="p">1000</item>
+    </style>
+    <style name="Widget.Base.Theme.FestivViews.MyView" parent="">
+        <item name="android:background">@color/gray_400</item>
+        <item name="exampleColor">@color/light_blue_400</item>
+    </style>
+    <style name="MyRatingBar" parent="@style/Widget.AppCompat.RatingBar.Indicator">
+        <item name="android:progressDrawable">@drawable/svgviewer_output</item>
+        <item name="android:indeterminateDrawable">@drawable/svgviewer_output</item>
+    </style>
+</resources>

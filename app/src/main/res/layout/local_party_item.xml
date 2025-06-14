@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="325dp"
+    android:layout_height="wrap_content"
+    android:layout_marginStart="8dp"
+    android:layout_marginEnd="8dp"
+    android:layout_marginBottom="8dp">
+
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/LocalEventCardHeader"
+        style="@style/EventCardHeader"
+        android:layout_width="325dp"
+        android:layout_height="95dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+            <TextView
+                android:id="@+id/LECHTitle"
+                android:layout_width="225dp"
+                android:layout_height="25dp"
+                style="@style/EventCardHeaderTitle"
+                android:text="This is placeholder info on a pool party"
+                android:textSize="19dp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/text_event_address_distance"
+                android:layout_width="75dp"
+                android:layout_height="15dp"
+                style="@style/EventCardHeaderDistance"
+                android:layout_marginTop="8dp"
+                android:layout_marginEnd="4dp"
+                android:text="1.2 mi"
+                android:textSize="12dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/LECHHostStatic"
+                android:layout_width="70dp"
+                android:layout_height="20dp"
+                style="@style/EventCardHeaderHostStatic"
+                android:text="Hosted By: "
+                android:textSize="12dp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/LECHTitle" />
+
+            <TextView
+                android:id="@+id/LECH_host"
+                android:layout_width="155dp"
+                android:layout_height="20dp"
+                style="@style/EventCardHeaderHostNames"
+                android:text="\@Jogoat"
+                android:textSize="12dp"
+                app:layout_constraintStart_toEndOf="@+id/LECHHostStatic"
+                app:layout_constraintTop_toBottomOf="@+id/LECHTitle" />
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/eventItemTagsRV"
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:orientation="horizontal"
+                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                app:layout_constraintTop_toBottomOf="@id/LECH_host"
+                tools:listitem="@layout/tag_item" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </com.google.android.material.card.MaterialCardView>
+
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/LocalEventCardInfo"
+        style="@style/EventCardInfo"
+        android:layout_width="325dp"
+        android:layout_height="200dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/LocalEventCardHeader">
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <TextView
+                android:id="@+id/LECIDescription"
+                android:layout_width="match_parent"
+                android:layout_height="120dp"
+                style="@style/EventCardInfoDescription"
+                android:textSize="14dp"
+                android:text="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/LECIPhotoCount"
+                android:layout_width="wrap_content"
+                android:layout_height="20dp"
+                android:layout_marginBottom="35dp"
+                style="@style/EventCardInfoPhotoCount"
+                android:text="2 PHOTO(S)"
+                android:textSize="12dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent" />
+
+            <Button
+                android:id="@+id/LocalInviteButton"
+                android:layout_width="150dp"
+                android:layout_height="30dp"
+                style="@style/EventCardActionButton"
+                android:backgroundTint="@color/InviteOthersButton"
+                android:text="INVITE OTHERS"
+                android:textSize="13dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent" />
+
+            <Button
+                android:id="@+id/LocalAcceptButton"
+                android:layout_width="150dp"
+                android:layout_height="30dp"
+                style="@style/EventCardActionButton"
+                android:text="I'M IN"
+                android:backgroundTint="@color/ImInButton"
+                android:textSize="13dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </com.google.android.material.card.MaterialCardView>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
