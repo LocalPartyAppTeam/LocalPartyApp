@@ -147,7 +147,18 @@
         android:backgroundTint="@color/InviteOthersButton"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/localEventDescriptionCard"
+        app:layout_constraintTop_toBottomOf="@+id/localEventDescriptionCard"/>
+    <Button
+        android:id="@+id/share_with_others"
+        android:layout_width="390dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="15dp"
+        android:text="INVITE OTHERS"
+        style="@style/EventCardActionButton"
+        android:backgroundTint="@color/EditEventButton"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/see_who_is_going"
         />
 
     <!-- Green button to join event -->
@@ -163,7 +174,7 @@
         android:backgroundTint="@color/ImInButton"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/see_who_is_going" />
+        app:layout_constraintTop_toBottomOf="@+id/share_with_others" />
 
     <Button
         android:id="@+id/reviewButton"

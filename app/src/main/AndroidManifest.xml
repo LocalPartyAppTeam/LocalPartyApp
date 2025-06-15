@@ -24,6 +24,9 @@
         android:theme="@style/Base.Theme.FestivViews"
         tools:targetApi="31">
         <activity
+            android:name=".activities.InviteUsersActivity"
+            android:exported="false" />
+        <activity
             android:name=".blank"
             android:exported="false" />
         <activity
@@ -37,10 +40,10 @@
             android:exported="false" />
         <activity
             android:name=".CaptureAct"
+            android:exported="false"
             android:screenOrientation="portrait"
             android:stateNotNeeded="true"
-            android:theme="@style/zxing_CaptureTheme"
-            android:exported="false" />
+            android:theme="@style/zxing_CaptureTheme" />
         <activity
             android:name=".activities.OwnerEventExtraActivity"
             android:exported="false"
@@ -61,6 +64,7 @@
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
@@ -80,9 +84,11 @@
             android:name=".activities.EstablishmentExtraActivity"
             android:exported="false"
             android:label="LocalsE" />
-        <activity android:name=".activities.AddReviewActivity"
+        <activity
+            android:name=".activities.AddReviewActivity"
             android:exported="false"
-            android:label="Review"/>
+            android:label="Review" />
+
         <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="${MAPS_API_KEY}" />
@@ -93,7 +99,6 @@
         <uses-library
             android:name="org.apache.http.legacy"
             android:required="false" />
-
     </application>
 
 </manifest>

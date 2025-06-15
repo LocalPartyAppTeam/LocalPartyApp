@@ -51,6 +51,7 @@ class CheckInActivity : AppCompatActivity() {
                 userCall.addOnSuccessListener{userSnapshot->
                     val user = CheckInUserModel(userSnapshot.getValue(UserModel::class.java)!!, checked!!)
                     userList.add(user)
+                    userListPool.add(user)
                     usersAdapter.notifyDataSetChanged()
                 }
             }
@@ -59,24 +60,20 @@ class CheckInActivity : AppCompatActivity() {
             scanCode()
         }
         nameFilter.doOnTextChanged { text, _, _, _ ->
-            filterString = (text ?: "").toString()
-            for(userCheck in userListPool) {
-                val user = userCheck.user!!
-                if ((user.firstName!! + user.lastName!!).contains(filterString) or user.username!!.contains(filterString)
+            filterString = (text ?: "").toString().lowercase().trim()
+            userList.clear()
+            for(cuser in userListPool) {
+                val user = cuser.user!!
+                val s1 = (user.firstName!! + user.lastName!!).lowercase()
+                val s2 = user.username!!.lowercase()
+                if (s1.contains(filterString) or s2.contains(filterString)
                 ) {
-                    userList.add(userCheck)
-                    userListPool.remove(userCheck)
+                    userList.add(cuser)
                 }
-            }
-            for(userCheck in userList) {
-                val user = userCheck.user!!
-                if (!((user.firstName!! + user.lastName!!).contains(filterString) or user.username!!.contains(filterString)
-                )) {
-                    userListPool.add(userCheck)
-                    userList.remove(userCheck)
-                }
+                Log.i("nameFilter", s1+ " " + s2 + " " + userList.size.toString())
             }
             usersAdapter.notifyDataSetChanged()
+            Log.i("nameFilter", userList.size.toString() + " ")
         }
     }
 

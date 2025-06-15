@@ -101,6 +101,7 @@ class LocalsExtraActivity : AppCompatActivity(), OnMapReadyCallback {
         val qrFullname = findViewById<TextView>(R.id.qr_full_name)
         val qrUsername = findViewById<TextView>(R.id.qr_username)
         val viewQrCardButton = findViewById<Button>(R.id.myQrButton)
+        val inviteButton = findViewById<Button>(R.id.share_with_others)
         val qrCardBackButton = findViewById<ImageButton>(R.id.qrCardBackButton)
 
         val qrnamefill = database.getReference("Users").child(auth.currentUser!!.uid).get()
@@ -143,6 +144,14 @@ class LocalsExtraActivity : AppCompatActivity(), OnMapReadyCallback {
         }
         whosGoingButton.setOnClickListener {
             val intent = Intent(this, SeeAttendeesActivity::class.java).apply {
+                putExtra("pushId",event.pushId)
+                putExtra("owner", event.host == auth.currentUser!!.uid)
+            }
+            this.startActivity(intent)
+        }
+
+        inviteButton.setOnClickListener {
+            val intent = Intent(this, InviteUsersActivity::class.java).apply {
                 putExtra("pushId",event.pushId)
                 putExtra("owner", event.host == auth.currentUser!!.uid)
             }
